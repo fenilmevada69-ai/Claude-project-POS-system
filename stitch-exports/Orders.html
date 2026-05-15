@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;family=Geist:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #0f1117;
+            color: #e2e2eb;
+            font-family: 'Geist', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-panel-heavy {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .accent-gradient {
+            background: linear-gradient(135deg, #7c3aed 0%, #0d9488 100%);
+        }
+        .glow-primary {
+            box-shadow: 0 0 20px rgba(210, 187, 255, 0.3);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                "surface-tint": "#d2bbff",
+                "secondary-fixed-dim": "#6bd8cb",
+                "outline": "#958da1",
+                "surface": "#111319",
+                "outline-variant": "#4a4455",
+                "surface-container-high": "#282a30",
+                "primary-fixed": "#eaddff",
+                "on-tertiary": "#1000a9",
+                "tertiary-fixed-dim": "#c0c1ff",
+                "surface-variant": "#33343b",
+                "surface-dim": "#111319",
+                "on-background": "#e2e2eb",
+                "tertiary": "#c0c1ff",
+                "on-surface-variant": "#ccc3d8",
+                "on-tertiary-fixed-variant": "#2f2ebe",
+                "surface-container-lowest": "#0c0e14",
+                "secondary-container": "#29a195",
+                "secondary": "#6bd8cb",
+                "on-error": "#690005",
+                "primary-fixed-dim": "#d2bbff",
+                "surface-bright": "#373940",
+                "primary-container": "#7c3aed",
+                "on-secondary-container": "#00302b",
+                "error-container": "#93000a",
+                "on-tertiary-fixed": "#07006c",
+                "error": "#ffb4ab",
+                "tertiary-fixed": "#e1e0ff",
+                "tertiary-container": "#5254df",
+                "on-primary-fixed": "#25005a",
+                "primary": "#d2bbff",
+                "background": "#111319",
+                "secondary-fixed": "#89f5e7",
+                "on-primary-container": "#ede0ff",
+                "on-secondary-fixed": "#00201d",
+                "on-secondary": "#003732",
+                "on-primary": "#3f008e",
+                "on-error-container": "#ffdad6",
+                "surface-container-low": "#191b22",
+                "inverse-surface": "#e2e2eb",
+                "surface-container": "#1e1f26",
+                "on-primary-fixed-variant": "#5a00c6",
+                "inverse-primary": "#732ee4",
+                "surface-container-highest": "#33343b",
+                "on-tertiary-container": "#e5e3ff",
+                "on-secondary-fixed-variant": "#005049",
+                "on-surface": "#e2e2eb",
+                "inverse-on-surface": "#2e3037"
+              },
+              "spacing": {
+                "sidebar-width": "72px",
+                "margin-mobile": "16px",
+                "container-max-width": "1440px",
+                "margin-desktop": "40px",
+                "gutter": "24px"
+              },
+              "fontFamily": {
+                "headline-md": ["Geist"],
+                "body-md": ["Geist"],
+                "label-sm": ["JetBrains Mono"],
+                "display": ["Geist"],
+                "headline-lg": ["Geist"],
+                "metadata": ["Geist"],
+                "body-lg": ["Geist"]
+              },
+              "fontSize": {
+                "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                "metadata": ["13px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+              }
+            }
+          }
+        }
+    </script>
+<style data-stitch-cursor=""></style><style data-stitch-scroll-lock=""></style></head>
+<body class="bg-surface text-on-surface">
+<!-- SideNavBar (Predicted Component) -->
+<aside class="fixed left-0 top-0 h-full w-[72px] bg-surface/80 dark:bg-surface/80 backdrop-blur-xl border-r border-white/10 shadow-2xl flex flex-col items-center py-6 space-y-8 z-50">
+<div class="font-headline-md text-headline-md text-primary mb-4 select-none">POS</div>
+<nav class="flex flex-col items-center w-full space-y-4">
+<!-- Dashboard -->
+<a class="flex items-center justify-center w-full h-12 text-on-surface-variant/60 hover:text-primary transition-colors duration-200 active:scale-90 transition-transform" href="#" title="Dashboard">
+<span class="material-symbols-outlined">dashboard</span>
+</a>
+<!-- Inventory -->
+<a class="flex items-center justify-center w-full h-12 text-on-surface-variant/60 hover:text-primary transition-colors duration-200 active:scale-90 transition-transform" href="#" title="Inventory">
+<span class="material-symbols-outlined">inventory_2</span>
+</a>
+<!-- Sales (Active for Orders History) -->
+<a class="relative flex items-center justify-center w-full h-12 text-on-primary after:absolute after:left-0 after:w-1 after:h-8 after:bg-primary after:rounded-r-full after:shadow-[0_0_15px_rgba(210,187,255,0.6)]" href="#" title="Sales">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">point_of_sale</span>
+</a>
+<!-- Customers -->
+<a class="flex items-center justify-center w-full h-12 text-on-surface-variant/60 hover:text-primary transition-colors duration-200 active:scale-90 transition-transform" href="#" title="Customers">
+<span class="material-symbols-outlined">group</span>
+</a>
+<!-- Reports -->
+<a class="flex items-center justify-center w-full h-12 text-on-surface-variant/60 hover:text-primary transition-colors duration-200 active:scale-90 transition-transform" href="#" title="Reports">
+<span class="material-symbols-outlined">analytics</span>
+</a>
+<!-- Settings -->
+<a class="flex items-center justify-center w-full h-12 text-on-surface-variant/60 hover:text-primary transition-colors duration-200 active:scale-90 transition-transform" href="#" title="Settings">
+<span class="material-symbols-outlined">settings</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col items-center space-y-4 w-full">
+<a class="flex items-center justify-center w-full h-12 text-on-surface-variant/60 hover:text-primary transition-colors duration-200" href="#" title="Help">
+<span class="material-symbols-outlined">help</span>
+</a>
+<a class="flex items-center justify-center w-full h-12 text-on-surface-variant/60 hover:text-primary transition-colors duration-200" href="#" title="Logout">
+<span class="material-symbols-outlined">logout</span>
+</a>
+</div>
+</aside>
+<!-- TopNavBar (Predicted Component) -->
+<header class="fixed top-0 right-0 left-[72px] h-16 bg-surface-dim/70 dark:bg-surface-dim/70 backdrop-blur-lg border-b border-white/5 flex items-center justify-between px-margin-desktop z-40">
+<div class="flex items-center space-x-8">
+<span class="font-headline-lg text-headline-lg font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Lumina POS</span>
+<div class="relative group">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60 material-symbols-outlined">search</span>
+<input class="bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 py-1.5 text-body-md focus:outline-none focus:ring-2 focus:ring-secondary/50 transition-all w-64" placeholder="Search for order #..." type="text"/>
+</div>
+</div>
+<div class="flex items-center space-x-6">
+<button class="bg-primary-container text-on-primary-container px-4 py-2 rounded-lg font-body-md font-bold shadow-lg hover:brightness-110 active:scale-95 transition-all">
+                Register Open
+            </button>
+<div class="flex items-center space-x-4">
+<button class="text-on-surface-variant hover:bg-white/5 p-2 rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="text-on-surface-variant hover:bg-white/5 p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-white/20">
+<img alt="Cashier Profile" data-alt="A close-up professional headshot portrait of a smiling young cashier with a diverse background, set against a blurred modern retail store environment. The lighting is bright and cheerful, emphasizing high-fidelity details and a welcoming atmosphere that aligns with the premium Lumina POS brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxtT-Wi9kBOfGwmPrDFrby8b_AdIllZ2jyHWVVtntYzVpCmNliPsE4HlRR04afJ9-ZFQjOGD1f1BljJYHc8f1sUolfZhC8dZVLe1lCYEMjJ-9z0gnO8Llsoh3QgaWxTVMZjjcUsVbP1vi3-mrV2i65RNA2XNVXk0ZV9e8xlKc0Pk7vw1I172Cw4fDAl08nmv423o8B50psg4Pmqt33GzesdsCLLAogkNVigVGPVHdYWti3NvpMdqAFw9MrdPoQ5geC1GhqYGnEANEm"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[72px] pt-16 p-margin-desktop min-h-screen">
+<!-- Header Section -->
+<div class="flex justify-between items-end mb-8">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-white mb-2">Orders</h1>
+<p class="text-on-surface-variant font-body-md">Manage and review your transaction history</p>
+</div>
+<button class="flex items-center space-x-2 px-6 py-2.5 rounded-lg border border-white/10 text-white font-body-md hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined text-[20px]">ios_share</span>
+<span class="">Export Orders</span>
+</button>
+</div>
+<!-- Filter Row -->
+<div class="flex flex-wrap items-center justify-between gap-gutter mb-6">
+<div class="flex items-center space-x-gutter">
+<!-- Date Filters -->
+<div class="flex bg-white/5 p-1 rounded-xl border border-white/5">
+<button class="px-5 py-1.5 rounded-lg text-label-sm font-label-sm text-white accent-gradient glow-primary">TODAY</button>
+<button class="px-5 py-1.5 rounded-lg text-label-sm font-label-sm text-on-surface-variant hover:text-white transition-colors">THIS WEEK</button>
+<button class="px-5 py-1.5 rounded-lg text-label-sm font-label-sm text-on-surface-variant hover:text-white transition-colors">CUSTOM</button>
+</div>
+<!-- Status Filters -->
+<div class="flex bg-white/5 p-1 rounded-xl border border-white/5">
+<button class="px-5 py-1.5 rounded-lg text-label-sm font-label-sm text-on-surface-variant hover:text-white transition-colors">ALL</button>
+<button class="px-5 py-1.5 rounded-lg text-label-sm font-label-sm text-white bg-white/10">COMPLETED</button>
+<button class="px-5 py-1.5 rounded-lg text-label-sm font-label-sm text-on-surface-variant hover:text-white transition-colors">VOIDED</button>
+<button class="px-5 py-1.5 rounded-lg text-label-sm font-label-sm text-on-surface-variant hover:text-white transition-colors">PENDING</button>
+</div>
+</div>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/60 material-symbols-outlined">person_search</span>
+<input class="bg-black/20 border border-white/10 rounded-xl pl-12 pr-6 py-2.5 text-body-md focus:outline-none focus:ring-2 focus:ring-secondary/50 transition-all w-80" placeholder="Cashier name..." type="text"/>
+</div>
+</div>
+<!-- Main Orders Table -->
+<div class="glass-panel rounded-2xl overflow-hidden mb-8">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-white/10 bg-white/5"><th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Order #</th><th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Date &amp; Time</th><th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Cashier</th><th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Items</th><th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Payment</th><th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Status</th><th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Total</th><th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-right">Actions</th></tr>
+</thead>
+<tbody class="divide-y divide-white/5">
+<!-- Order 1 -->
+<tr class="hover:bg-white/5 transition-colors cursor-pointer group"><td class="px-6 py-4 font-label-sm text-white">#8492-X</td><td class="px-6 py-4 text-body-md text-on-surface-variant">Oct 24, 02:45 PM</td><td class="px-6 py-4 text-body-md text-white">Alex Rivera</td><td class="px-6 py-4 text-body-md text-on-surface-variant">4 items</td><td class="px-6 py-4 text-body-md text-on-surface-variant">Credit Card</td><td class="px-6 py-4"><span class="inline-flex items-center px-3 py-1 rounded-full text-label-sm font-label-sm bg-secondary/10 text-secondary border border-secondary/20">COMPLETED</span></td><td class="px-6 py-4 font-headline-md text-primary">$477.90</td><td class="px-6 py-4 text-right"><button class="text-on-surface-variant group-hover:text-white transition-colors"><span class="material-symbols-outlined">visibility</span></button></td></tr>
+<!-- Order 2 -->
+<tr class="hover:bg-white/5 transition-colors cursor-pointer group"><td class="px-6 py-4 font-label-sm text-white">#8491-X</td><td class="px-6 py-4 text-body-md text-on-surface-variant">Oct 24, 02:12 PM</td><td class="px-6 py-4 text-body-md text-white">Sarah Jenkins</td><td class="px-6 py-4 text-body-md text-on-surface-variant">2 items</td><td class="px-6 py-4 text-body-md text-on-surface-variant">Apple Pay</td><td class="px-6 py-4"><span class="inline-flex items-center px-3 py-1 rounded-full text-label-sm font-label-sm bg-secondary/10 text-secondary border border-secondary/20">COMPLETED</span></td><td class="px-6 py-4 font-headline-md text-primary">$210.00</td><td class="px-6 py-4 text-right"><button class="text-on-surface-variant group-hover:text-white transition-colors"><span class="material-symbols-outlined">visibility</span></button></td></tr>
+<!-- Order 3 (Voided) -->
+<tr class="hover:bg-white/5 transition-colors cursor-pointer group"><td class="px-6 py-4 font-label-sm text-white">#8490-X</td><td class="px-6 py-4 text-body-md text-on-surface-variant">Oct 24, 01:55 PM</td><td class="px-6 py-4 text-body-md text-white">Alex Rivera</td><td class="px-6 py-4 text-body-md text-on-surface-variant">1 item</td><td class="px-6 py-4 text-body-md text-on-surface-variant">Cash</td><td class="px-6 py-4"><span class="inline-flex items-center px-3 py-1 rounded-full text-label-sm font-label-sm bg-error/10 text-error border border-error/20">VOIDED</span></td><td class="px-6 py-4 font-headline-md text-on-surface-variant/40">$45.00</td><td class="px-6 py-4 text-right"><button class="text-on-surface-variant group-hover:text-white transition-colors"><span class="material-symbols-outlined">visibility</span></button></td></tr>
+<!-- Order 4 (Pending) -->
+<tr class="hover:bg-white/5 transition-colors cursor-pointer group"><td class="px-6 py-4 font-label-sm text-white">#8489-X</td><td class="px-6 py-4 text-body-md text-on-surface-variant">Oct 24, 01:30 PM</td><td class="px-6 py-4 text-body-md text-white">Sarah Jenkins</td><td class="px-6 py-4 text-body-md text-on-surface-variant">6 items</td><td class="px-6 py-4 text-body-md text-on-surface-variant">Cash</td><td class="px-6 py-4"><span class="inline-flex items-center px-3 py-1 rounded-full text-label-sm font-label-sm bg-orange-500/10 text-orange-400 border border-orange-500/20">PENDING</span></td><td class="px-6 py-4 font-headline-md text-primary">$120.00</td><td class="px-6 py-4 text-right"><button class="text-on-surface-variant group-hover:text-white transition-colors"><span class="material-symbols-outlined">visibility</span></button></td></tr>
+<!-- More mock rows -->
+<tr class="hover:bg-white/5 transition-colors cursor-pointer group"><td class="px-6 py-4 font-label-sm text-white">#8488-X</td><td class="px-6 py-4 text-body-md text-on-surface-variant">Oct 24, 12:45 PM</td><td class="px-6 py-4 text-body-md text-white">Alex Rivera</td><td class="px-6 py-4 text-body-md text-on-surface-variant">3 items</td><td class="px-6 py-4 text-body-md text-on-surface-variant">Credit Card</td><td class="px-6 py-4"><span class="inline-flex items-center px-3 py-1 rounded-full text-label-sm font-label-sm bg-secondary/10 text-secondary border border-secondary/20">COMPLETED</span></td><td class="px-6 py-4 font-headline-md text-primary">$350.00</td><td class="px-6 py-4 text-right"><button class="text-on-surface-variant group-hover:text-white transition-colors"><span class="material-symbols-outlined">visibility</span></button></td></tr>
+<tr class="hover:bg-white/5 transition-colors cursor-pointer group"><td class="px-6 py-4 font-label-sm text-white">#8487-X</td><td class="px-6 py-4 text-body-md text-on-surface-variant">Oct 24, 12:10 PM</td><td class="px-6 py-4 text-body-md text-white">Sarah Jenkins</td><td class="px-6 py-4 text-body-md text-on-surface-variant">5 items</td><td class="px-6 py-4 text-body-md text-on-surface-variant">Credit Card</td><td class="px-6 py-4"><span class="inline-flex items-center px-3 py-1 rounded-full text-label-sm font-label-sm bg-secondary/10 text-secondary border border-secondary/20">COMPLETED</span></td><td class="px-6 py-4 font-headline-md text-primary">$520.00</td><td class="px-6 py-4 text-right"><button class="text-on-surface-variant group-hover:text-white transition-colors"><span class="material-symbols-outlined">visibility</span></button></td></tr>
+<tr class="hover:bg-white/5 transition-colors cursor-pointer group"><td class="px-6 py-4 font-label-sm text-white">#8486-X</td><td class="px-6 py-4 text-body-md text-on-surface-variant">Oct 24, 11:30 AM</td><td class="px-6 py-4 text-body-md text-white">Alex Rivera</td><td class="px-6 py-4 text-body-md text-on-surface-variant">2 items</td><td class="px-6 py-4 text-body-md text-on-surface-variant">Google Pay</td><td class="px-6 py-4"><span class="inline-flex items-center px-3 py-1 rounded-full text-label-sm font-label-sm bg-secondary/10 text-secondary border border-secondary/20">COMPLETED</span></td><td class="px-6 py-4 font-headline-md text-primary">$85.00</td><td class="px-6 py-4 text-right"><button class="text-on-surface-variant group-hover:text-white transition-colors"><span class="material-symbols-outlined">visibility</span></button></td></tr>
+<tr class="hover:bg-white/5 transition-colors cursor-pointer group"><td class="px-6 py-4 font-label-sm text-white">#8485-X</td><td class="px-6 py-4 text-body-md text-on-surface-variant">Oct 24, 11:15 AM</td><td class="px-6 py-4 text-body-md text-white">Sarah Jenkins</td><td class="px-6 py-4 text-body-md text-on-surface-variant">1 item</td><td class="px-6 py-4 text-body-md text-on-surface-variant">Cash</td><td class="px-6 py-4"><span class="inline-flex items-center px-3 py-1 rounded-full text-label-sm font-label-sm bg-error/10 text-error border border-error/20">VOIDED</span></td><td class="px-6 py-4 font-headline-md text-on-surface-variant/40">$15.00</td><td class="px-6 py-4 text-right"><button class="text-on-surface-variant group-hover:text-white transition-colors"><span class="material-symbols-outlined">visibility</span></button></td></tr>
+<tr class="hover:bg-white/5 transition-colors cursor-pointer group"><td class="px-6 py-4 font-label-sm text-white">#8484-X</td><td class="px-6 py-4 text-body-md text-on-surface-variant">Oct 24, 10:45 AM</td><td class="px-6 py-4 text-body-md text-white">Alex Rivera</td><td class="px-6 py-4 text-body-md text-on-surface-variant">7 items</td><td class="px-6 py-4 text-body-md text-on-surface-variant">Credit Card</td><td class="px-6 py-4"><span class="inline-flex items-center px-3 py-1 rounded-full text-label-sm font-label-sm bg-secondary/10 text-secondary border border-secondary/20">COMPLETED</span></td><td class="px-6 py-4 font-headline-md text-primary">$640.00</td><td class="px-6 py-4 text-right"><button class="text-on-surface-variant group-hover:text-white transition-colors"><span class="material-symbols-outlined">visibility</span></button></td></tr>
+<tr class="hover:bg-white/5 transition-colors cursor-pointer group"><td class="px-6 py-4 font-label-sm text-white">#8483-X</td><td class="px-6 py-4 text-body-md text-on-surface-variant">Oct 24, 10:20 AM</td><td class="px-6 py-4 text-body-md text-white">Sarah Jenkins</td><td class="px-6 py-4 text-body-md text-on-surface-variant">3 items</td><td class="px-6 py-4 text-body-md text-on-surface-variant">Apple Pay</td><td class="px-6 py-4"><span class="inline-flex items-center px-3 py-1 rounded-full text-label-sm font-label-sm bg-orange-500/10 text-orange-400 border border-orange-500/20">PENDING</span></td><td class="px-6 py-4 font-headline-md text-primary">$290.00</td><td class="px-6 py-4 text-right"><button class="text-on-surface-variant group-hover:text-white transition-colors"><span class="material-symbols-outlined">visibility</span></button></td></tr>
+</tbody>
+</table>
+<!-- Pagination -->
+<div class="p-6 flex items-center justify-between border-t border-white/10 bg-white/5">
+<span class="text-on-surface-variant font-body-md">Showing 10 of 1,248 orders</span>
+<div class="flex items-center space-x-2">
+<button class="px-3 py-1.5 rounded-lg border border-white/10 text-on-surface-variant hover:text-white transition-colors">Prev</button>
+<button class="px-3.5 py-1.5 rounded-lg bg-primary/20 text-primary border border-primary/30">1</button>
+<button class="px-3.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-white/5">2</button>
+<button class="px-3.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-white/5">3</button>
+<span class="text-on-surface-variant px-2">...</span>
+<button class="px-3.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-white/5">125</button>
+<button class="px-3 py-1.5 rounded-lg border border-white/10 text-on-surface-variant hover:text-white transition-colors">Next</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Order Detail Drawer (Simulated Open State) -->
+<div class="fixed top-0 right-0 h-full w-[450px] glass-panel-heavy z-[60] shadow-[-20px_0_50px_rgba(0,0,0,0.5)] transform transition-transform translate-x-0">
+<div class="flex flex-col h-full">
+<!-- Drawer Header -->
+<div class="p-8 border-b border-white/10 relative">
+<button class="absolute top-8 right-8 text-on-surface-variant hover:text-white transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+<div class="font-label-sm text-label-sm text-primary mb-2 tracking-widest uppercase">Order Details</div>
+<h2 class="font-headline-lg text-headline-lg text-white mb-1">#8492-X</h2>
+<div class="text-on-surface-variant font-body-md flex flex-col space-y-1">
+<span class="">Oct 24, 02:45 PM</span>
+<span class="">Cashier: <strong class="text-white">Alex Rivera</strong></span>
+</div>
+</div>
+<!-- Receipt Body -->
+<div class="flex-grow overflow-y-auto p-8">
+<div class="space-y-6">
+<div class="flex items-start justify-between"><div class="flex space-x-4"><div class="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center border border-white/10"></div><div><h4 class="text-white font-body-md font-bold">Eco Water Bottle</h4><p class="text-on-surface-variant text-metadata">1x $35.00</p></div></div><span class="text-white font-body-md">$35.00</span></div>
+<div class="flex items-start justify-between"><div class="flex space-x-4"><div class="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center border border-white/10"></div><div><h4 class="text-white font-body-md font-bold">Wireless Keyboard</h4><p class="text-on-surface-variant text-metadata">1x $120.00</p></div></div><span class="text-white font-body-md">$120.00</span></div>
+<div class="flex items-start justify-between"><div class="flex space-x-4"><div class="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center border border-white/10"></div><div><h4 class="text-white font-body-md font-bold">Smart Watch V2</h4><p class="text-on-surface-variant text-metadata">1x $250.00</p></div></div><span class="text-white font-body-md">$250.00</span></div>
+</div>
+</div>
+<!-- Drawer Footer -->
+<div class="p-8 bg-white/5 border-t border-white/10">
+<div class="space-y-3 mb-8">
+<div class="flex justify-between text-on-surface-variant font-body-md">
+<span class="">Subtotal</span>
+<span class="">$405.00</span>
+</div>
+<div class="flex justify-between text-on-surface-variant font-body-md">
+<span class="">Tax (18%)</span>
+<span class="">$72.90</span>
+</div>
+<div class="flex justify-between items-end pt-4 border-t border-white/5">
+<span class="text-white font-headline-md">Total</span>
+<span class="text-display text-secondary-fixed-dim leading-none">$477.90</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 rounded-xl bg-black/20 border border-white/5">
+<div class="flex items-center space-x-3">
+<span class="material-symbols-outlined text-on-surface-variant">credit_card</span>
+<span class="text-on-surface-variant font-body-md">Paid via Mastercard</span>
+</div>
+<span class="text-white font-label-sm">•••• 4242</span>
+</div>
+<button class="w-full mt-6 accent-gradient py-4 rounded-xl text-white font-bold font-body-md glow-primary hover:brightness-110 active:scale-95 transition-all">
+                    Print Receipt
+                </button>
+</div>
+</div>
+</div>
+</body></html>

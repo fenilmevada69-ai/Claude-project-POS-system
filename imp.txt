@@ -1,0 +1,5 @@
+username = fenilmevada
+password = vuiZs3aKUP790Im9
+
+
+mongodb+srv://<db_username>:<db_password>@pos-system.yfmgaxq.mongodb.net/?appName=POS-System

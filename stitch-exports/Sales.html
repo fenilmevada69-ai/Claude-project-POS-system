@@ -1,0 +1,361 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=JetBrains+Mono:wght@100..800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .accent-gradient {
+            background: linear-gradient(135deg, #7c3aed 0%, #0d9488 100%);
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #d2bbff 0%, #6bd8cb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        body {
+            background-color: #0f1117;
+            color: #e2e2eb;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-fixed": "#e1e0ff",
+                      "on-error-container": "#ffdad6",
+                      "secondary-fixed": "#89f5e7",
+                      "surface-container-lowest": "#0c0e14",
+                      "surface-container-low": "#191b22",
+                      "on-background": "#e2e2eb",
+                      "on-secondary": "#003732",
+                      "surface-bright": "#373940",
+                      "tertiary-fixed-dim": "#c0c1ff",
+                      "surface-tint": "#d2bbff",
+                      "surface-container-high": "#282a30",
+                      "secondary": "#6bd8cb",
+                      "on-tertiary-fixed-variant": "#2f2ebe",
+                      "on-tertiary": "#1000a9",
+                      "primary": "#d2bbff",
+                      "outline": "#958da1",
+                      "on-primary-fixed-variant": "#5a00c6",
+                      "secondary-container": "#29a195",
+                      "primary-container": "#7c3aed",
+                      "error": "#ffb4ab",
+                      "surface-variant": "#33343b",
+                      "background": "#111319",
+                      "error-container": "#93000a",
+                      "tertiary-container": "#5254df",
+                      "on-secondary-fixed-variant": "#005049",
+                      "surface-container": "#1e1f26",
+                      "primary-fixed-dim": "#d2bbff",
+                      "tertiary": "#c0c1ff",
+                      "on-surface-variant": "#ccc3d8",
+                      "on-tertiary-fixed": "#07006c",
+                      "inverse-on-surface": "#2e3037",
+                      "surface": "#111319",
+                      "outline-variant": "#4a4455",
+                      "on-tertiary-container": "#e5e3ff",
+                      "on-primary-fixed": "#25005a",
+                      "on-error": "#690005",
+                      "inverse-surface": "#e2e2eb",
+                      "on-primary": "#3f008e",
+                      "secondary-fixed-dim": "#6bd8cb",
+                      "surface-container-highest": "#33343b",
+                      "on-secondary-container": "#00302b",
+                      "primary-fixed": "#eaddff",
+                      "inverse-primary": "#732ee4",
+                      "on-secondary-fixed": "#00201d",
+                      "on-surface": "#e2e2eb",
+                      "surface-dim": "#111319",
+                      "on-primary-container": "#ede0ff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "40px",
+                      "gutter": "24px",
+                      "container-max-width": "1440px",
+                      "sidebar-width": "72px",
+                      "margin-mobile": "16px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Geist"],
+                      "metadata": ["Geist"],
+                      "body-md": ["Geist"],
+                      "body-lg": ["Geist"],
+                      "headline-md": ["Geist"],
+                      "display": ["Geist"],
+                      "label-sm": ["JetBrains Mono"]
+              },
+              "fontSize": {
+                      "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "metadata": ["13px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                      "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                      "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "500"}]
+              }
+            },
+          },
+        }
+    </script>
+<style data-stitch-cursor=""></style><style data-stitch-scroll-lock=""></style></head>
+<body class="font-body-md text-on-surface overflow-hidden">
+<!-- SideNavBar (Rail) -->
+<aside class="bg-surface/80 backdrop-blur-md w-sidebar-width h-full fixed left-0 top-0 border-r border-white/10 flex flex-col items-center py-gutter space-y-8 z-50">
+<div class="font-display text-display text-primary drop-shadow-[0_0_10px_rgba(210,187,255,0.3)] scale-75">L</div>
+<nav class="flex-1 flex flex-col space-y-4">
+<!-- Dashboard (Inactive) -->
+<button class="text-on-surface-variant/60 flex items-center justify-center py-4 hover:text-on-surface hover:bg-white/5 transition-all scale-95 active:scale-90">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+</button>
+<!-- Inventory (Inactive) -->
+<button class="text-on-surface-variant/60 flex items-center justify-center py-4 hover:text-on-surface hover:bg-white/5 transition-all scale-95 active:scale-90">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+</button>
+<!-- Sales (Active - Determining intent: Sales Analytics page) -->
+<button class="relative text-on-surface py-4 before:content-[''] before:absolute before:left-0 before:w-[3px] before:h-8 before:bg-primary before:shadow-[0_0_15px_rgba(210,187,255,0.8)] before:rounded-r-full transition-all">
+<span class="material-symbols-outlined" data-icon="receipt_long" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+</button>
+<!-- Customers (Inactive) -->
+<button class="text-on-surface-variant/60 flex items-center justify-center py-4 hover:text-on-surface hover:bg-white/5 transition-all scale-95 active:scale-90">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+</button>
+<!-- Settings (Inactive) -->
+<button class="text-on-surface-variant/60 flex items-center justify-center py-4 hover:text-on-surface hover:bg-white/5 transition-all scale-95 active:scale-90">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</nav>
+<div class="mt-auto">
+<button class="text-on-surface-variant/60 flex items-center justify-center py-4 hover:text-on-surface hover:bg-white/5 transition-all scale-95 active:scale-90">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+</button>
+</div>
+</aside>
+<!-- TopAppBar -->
+<header class="bg-surface/40 backdrop-blur-lg h-16 w-[calc(100%-72px)] fixed top-0 right-0 z-40 border-b border-white/5 shadow-sm flex justify-between items-center px-gutter">
+<div class="flex items-center space-x-6 flex-1">
+<div class="font-headline-md text-headline-md font-bold text-on-surface">Sales Analytics</div>
+<div class="flex items-center bg-black/20 border border-white/10 rounded-full px-4 py-1.5 w-64 focus-within:ring-2 focus-within:ring-secondary/50 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-metadata p-0 w-full" placeholder="Search reports..." type="text">
+</div>
+</div>
+<div class="flex items-center space-x-6">
+<div class="flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-secondary tracking-widest">SHIFT: 06:42:10</span>
+<span class="font-metadata text-metadata text-on-surface-variant">Term ID: #LMN-99</span>
+</div>
+<div class="flex items-center space-x-3 border-l border-white/10 pl-6">
+<span class="material-symbols-outlined text-on-surface-variant hover:bg-white/5 p-2 rounded-xl transition-colors cursor-pointer" data-icon="notifications">notifications</span>
+<div class="w-10 h-10 rounded-xl overflow-hidden border border-white/20">
+<img alt="Cashier Avatar" data-alt="A professional digital portrait of a young retail manager with short dark hair, wearing a sleek modern navy uniform. The background is a blurred high-end retail environment with neon accent lighting. The image has a clean, high-contrast aesthetic consistent with a premium software dashboard profile icon." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAR0VQ4v9cn0su0BoY8PTGPnsndFnSdVpZNVHrYCmZ9wJafmWxuuSV9ZVJ2_EhbmTisCSkPZVtsoaE6idU_XGf5b5wYjb7wtw-oe0b2JVlCzr0ZRjU735R5bMO04uEuzZ82zqaUgQyF29VILzayV2bzN9eQaRpmG1jAtyy_N84qYLJSMuEex-E4wo6WBmJJEXOeUnzvc9h8sc-vnIMA31dNF9jWnvyyHlSnWg-_b_ul9dG2svbaj04QLiNvXMd98CdOSwpTB-Gtpo1H">
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-sidebar-width mt-16 p-gutter h-[calc(100vh-64px)] overflow-y-auto">
+<div class="max-w-container-max-width mx-auto space-y-gutter">
+<!-- ROW 1: KPI Cards -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter">
+<!-- Total Revenue -->
+<div class="glass-panel p-5 rounded-xl flex flex-col space-y-2 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-24 h-24 bg-secondary/5 blur-3xl -mr-8 -mt-8"></div>
+<span class="font-label-sm text-label-sm text-on-surface-variant/70 uppercase">Total Revenue</span>
+<div class="flex justify-between items-end">
+<span class="font-headline-lg text-headline-lg">$12,450</span>
+<span class="font-label-sm text-label-sm text-secondary bg-secondary/10 px-2 py-1 rounded flex items-center">
+<span class="material-symbols-outlined text-sm mr-1" data-icon="trending_up">trending_up</span> +8.4%
+                        </span>
+</div>
+<div class="h-8 mt-2 w-full flex items-end space-x-1 opacity-50">
+<div class="w-full h-1/2 bg-secondary/30 rounded-full"></div>
+<div class="w-full h-3/4 bg-secondary/30 rounded-full"></div>
+<div class="w-full h-2/3 bg-secondary/30 rounded-full"></div>
+<div class="w-full h-full bg-secondary/50 rounded-full"></div>
+</div>
+</div>
+<!-- Total Orders -->
+<div class="glass-panel p-5 rounded-xl flex flex-col space-y-2 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 blur-3xl -mr-8 -mt-8"></div>
+<span class="font-label-sm text-label-sm text-on-surface-variant/70 uppercase">Total Orders</span>
+<div class="flex justify-between items-end">
+<span class="font-headline-lg text-headline-lg">156</span>
+<span class="font-label-sm text-label-sm text-primary bg-primary/10 px-2 py-1 rounded flex items-center">
+<span class="material-symbols-outlined text-sm mr-1" data-icon="trending_up">trending_up</span> +12%
+                        </span>
+</div>
+<div class="h-8 mt-2 w-full flex items-end space-x-1 opacity-50">
+<div class="w-full h-1/3 bg-primary/30 rounded-full"></div>
+<div class="w-full h-2/3 bg-primary/30 rounded-full"></div>
+<div class="w-full h-full bg-primary/50 rounded-full"></div>
+<div class="w-full h-4/5 bg-primary/30 rounded-full"></div>
+</div>
+</div>
+<!-- Avg Order Value -->
+<div class="glass-panel p-5 rounded-xl flex flex-col space-y-2 relative overflow-hidden group">
+<span class="font-label-sm text-label-sm text-on-surface-variant/70 uppercase">Avg Order Value</span>
+<div class="flex justify-between items-end">
+<span class="font-headline-lg text-headline-lg">$79.80</span>
+<span class="font-label-sm text-label-sm text-error bg-error/10 px-2 py-1 rounded flex items-center">
+<span class="material-symbols-outlined text-sm mr-1" data-icon="trending_down">trending_down</span> -2.1%
+                        </span>
+</div>
+<div class="h-8 mt-2 w-full flex items-end space-x-1 opacity-50">
+<div class="w-full h-full bg-error/30 rounded-full"></div>
+<div class="w-full h-3/4 bg-error/30 rounded-full"></div>
+<div class="w-full h-2/3 bg-error/30 rounded-full"></div>
+<div class="w-full h-1/2 bg-error/30 rounded-full"></div>
+</div>
+</div>
+<!-- Top Category -->
+<div class="glass-panel p-5 rounded-xl flex flex-col justify-center items-center text-center space-y-2 accent-gradient group">
+<span class="material-symbols-outlined text-4xl text-white mb-1" data-icon="category" style="font-variation-settings: 'FILL' 1;">category</span>
+<span class="font-label-sm text-label-sm text-white/80 uppercase">Top Category</span>
+<span class="font-headline-md text-headline-md text-white">Lifestyle</span>
+</div>
+</div>
+<!-- ROW 2: Bar Chart Panel -->
+<div class="glass-panel rounded-xl p-gutter">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h2 class="font-headline-md text-headline-md">Revenue Analysis</h2>
+<p class="font-metadata text-metadata text-on-surface-variant">Daily performance across all terminals</p>
+</div>
+<div class="flex bg-black/30 p-1 rounded-xl border border-white/5">
+<button class="px-4 py-1.5 font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface rounded-lg transition-all">Today</button>
+<button class="px-4 py-1.5 font-label-sm text-label-sm accent-gradient text-white rounded-lg shadow-[0_0_15px_rgba(124,58,237,0.4)]">7 Days</button>
+<button class="px-4 py-1.5 font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface rounded-lg transition-all">30 Days</button>
+</div>
+</div>
+<div class="flex items-stretch h-64 px-4"><div class="flex flex-col justify-between items-end pr-4 py-3 font-label-sm text-label-sm text-on-surface-variant/60"><span class="">$12.5k</span><span class="">$10k</span><span class="">$7.5k</span><span class="">$5k</span><span class="">$2.5k</span><span class="">$0</span></div><div class="flex-1 flex items-end justify-between space-x-4"><div class="flex-1 flex flex-col items-center space-y-3 group"><div class="w-full bg-white/5 rounded-t-lg h-32 relative overflow-hidden"><div class="absolute bottom-0 left-0 w-full h-[60%] accent-gradient opacity-60 group-hover:opacity-100 transition-opacity"></div></div><span class="font-label-sm text-label-sm text-on-surface-variant">Mon</span></div><div class="flex-1 flex flex-col items-center space-y-3 group"><div class="w-full bg-white/5 rounded-t-lg h-32 relative overflow-hidden"><div class="absolute bottom-0 left-0 w-full h-[45%] accent-gradient opacity-60 group-hover:opacity-100 transition-opacity"></div></div><span class="font-label-sm text-label-sm text-on-surface-variant">Tue</span></div><div class="flex-1 flex flex-col items-center space-y-3 group"><div class="w-full bg-white/5 rounded-t-lg h-32 relative overflow-hidden"><div class="absolute bottom-0 left-0 w-full h-[80%] accent-gradient opacity-60 group-hover:opacity-100 transition-opacity"></div></div><span class="font-label-sm text-label-sm text-on-surface-variant">Wed</span></div><div class="flex-1 flex flex-col items-center space-y-3 group"><div class="w-full bg-white/5 rounded-t-lg h-32 relative overflow-hidden"><div class="absolute bottom-0 left-0 w-full h-[65%] accent-gradient opacity-60 group-hover:opacity-100 transition-opacity"></div></div><span class="font-label-sm text-label-sm text-on-surface-variant">Thu</span></div><div class="flex-1 flex flex-col items-center space-y-3 group"><div class="w-full bg-white/5 rounded-t-lg h-32 relative overflow-hidden"><div class="absolute bottom-0 left-0 w-full h-[95%] accent-gradient opacity-60 group-hover:opacity-100 transition-opacity"></div></div><span class="font-label-sm text-label-sm text-on-surface-variant">Fri</span></div><div class="flex-1 flex flex-col items-center space-y-3 group"><div class="w-full bg-white/5 rounded-t-lg h-32 relative overflow-hidden"><div class="absolute bottom-0 left-0 w-full h-[75%] accent-gradient opacity-60 group-hover:opacity-100 transition-opacity"></div></div><span class="font-label-sm text-label-sm text-on-surface-variant">Sat</span></div><div class="flex-1 flex flex-col items-center space-y-3 group"><div class="w-full bg-white/5 rounded-t-lg h-32 relative overflow-hidden"><div class="absolute bottom-0 left-0 w-full h-[40%] accent-gradient opacity-60 group-hover:opacity-100 transition-opacity"></div></div><span class="font-label-sm text-label-sm text-on-surface-variant">Sun</span></div></div></div>
+</div>
+<!-- ROW 3: Split Columns -->
+<div class="grid grid-cols-1 lg:grid-cols-10 gap-gutter pb-8">
+<!-- Top Products (60%) -->
+<div class="lg:col-span-6 glass-panel rounded-xl overflow-hidden">
+<div class="p-6 border-b border-white/5 flex justify-between items-center">
+<h2 class="font-headline-md text-headline-md">Top Selling Products</h2>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-on-surface transition-colors" data-icon="more_horiz">more_horiz</span>
+</div>
+<table class="w-full text-left">
+<thead>
+<tr class="font-label-sm text-label-sm text-on-surface-variant/50 uppercase border-b border-white/5">
+<th class="px-6 py-4 font-medium">Rank</th>
+<th class="px-6 py-4 font-medium">Product Name</th>
+<th class="px-6 py-4 font-medium">Units</th>
+<th class="px-6 py-4 font-medium text-right">Revenue</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5 font-metadata">
+<tr class="hover:bg-white/5 transition-colors">
+<td class="px-6 py-4">
+<div class="w-7 h-7 accent-gradient rounded-full flex items-center justify-center text-white font-bold text-xs">1</div>
+</td>
+<td class="px-6 py-4">Lumina Glass Flask</td>
+<td class="px-6 py-4">1,240</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end space-x-3">
+<div class="w-24 h-1.5 bg-white/10 rounded-full overflow-hidden">
+<div class="w-4/5 h-full bg-primary"></div>
+</div>
+<span class="">$4,200</span>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors">
+<td class="px-6 py-4">
+<div class="w-7 h-7 accent-gradient rounded-full flex items-center justify-center text-white font-bold text-xs">2</div>
+</td>
+<td class="px-6 py-4">Cyber-Lite Backpack</td>
+<td class="px-6 py-4">890</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end space-x-3">
+<div class="w-24 h-1.5 bg-white/10 rounded-full overflow-hidden">
+<div class="w-3/5 h-full bg-primary"></div>
+</div>
+<span class="">$3,150</span>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors">
+<td class="px-6 py-4">
+<div class="w-7 h-7 accent-gradient rounded-full flex items-center justify-center text-white font-bold text-xs">3</div>
+</td>
+<td class="px-6 py-4">Matte Black Keycap Set</td>
+<td class="px-6 py-4">750</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end space-x-3">
+<div class="w-24 h-1.5 bg-white/10 rounded-full overflow-hidden">
+<div class="w-1/2 h-full bg-primary"></div>
+</div>
+<span class="">$2,800</span>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors">
+<td class="px-6 py-4">
+<div class="w-7 h-7 accent-gradient rounded-full flex items-center justify-center text-white font-bold text-xs">4</div>
+</td>
+<td class="px-6 py-4">Telescoping Lens Kit</td>
+<td class="px-6 py-4">420</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end space-x-3">
+<div class="w-24 h-1.5 bg-white/10 rounded-full overflow-hidden">
+<div class="w-1/3 h-full bg-primary"></div>
+</div>
+<span class="">$1,920</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Payment Split (40%) -->
+<div class="lg:col-span-4 glass-panel rounded-xl p-6 flex flex-col">
+<h2 class="font-headline-md text-headline-md mb-6">Payment Split</h2>
+<div class="flex-1 flex flex-col items-center justify-center relative">
+<!-- Simulated Donut Chart -->
+<div class="w-48 h-48 rounded-full border-[12px] border-white/5 relative flex items-center justify-center"><div class="absolute inset-0 border-[12px] border-primary rounded-full" style="clip-path: polygon(50% 50%, 50% 0, 100% 0, 100% 100%, 0 100%, 0 40%);"></div><div class="absolute inset-0 border-[12px] border-secondary rounded-full" style="clip-path: polygon(50% 50%, 0 40%, 0 15%, 50% 15%);"></div><div class="absolute inset-0 border-[12px] border-yellow-500 rounded-full" style="clip-path: polygon(50% 50%, 50% 0, 50% 0, 0 0, 0 15%);"></div></div>
+<div class="w-full mt-8 space-y-3">
+<div class="flex items-center justify-between font-metadata">
+<div class="flex items-center">
+<div class="w-3 h-3 rounded-full bg-primary mr-3"></div>
+<span class="">Credit Card</span>
+</div>
+<span class="font-label-sm text-label-sm">60%</span>
+</div>
+<div class="flex items-center justify-between font-metadata">
+<div class="flex items-center">
+<div class="w-3 h-3 rounded-full bg-secondary mr-3"></div>
+<span class="">Digital Wallet</span>
+</div>
+<span class="font-label-sm text-label-sm">25%</span>
+</div>
+<div class="flex items-center justify-between font-metadata"><div class="flex items-center"><div class="w-3 h-3 rounded-full bg-yellow-500 mr-3"></div><span class="">Cash</span></div><span class="font-label-sm text-label-sm">15%</span></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+
+</body></html>

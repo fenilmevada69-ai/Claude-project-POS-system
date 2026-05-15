@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Premium Retail POS - Payment &amp; Checkout</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "primary": "#d2bbff",
+                "on-secondary": "#003732",
+                "secondary": "#6bd8cb",
+                "tertiary-fixed-dim": "#c0c1ff",
+                "surface-container-high": "#282a30",
+                "on-error-container": "#ffdad6",
+                "error-container": "#93000a",
+                "secondary-fixed": "#89f5e7",
+                "surface-container-lowest": "#0c0e14",
+                "on-primary": "#3f008e",
+                "error": "#ffb4ab",
+                "surface": "#111319",
+                "surface-container-highest": "#33343b",
+                "on-surface": "#e2e2eb",
+                "outline-variant": "#4a4455",
+                "inverse-surface": "#e2e2eb",
+                "background": "#111319",
+                "primary-container": "#7c3aed",
+                "on-tertiary-fixed": "#07006c",
+                "surface-dim": "#111319",
+                "on-tertiary-fixed-variant": "#2f2ebe",
+                "on-secondary-container": "#00302b",
+                "on-primary-fixed": "#25005a",
+                "on-primary-container": "#ede0ff",
+                "tertiary-container": "#5254df",
+                "surface-container": "#1e1f26",
+                "surface-bright": "#373940",
+                "on-primary-fixed-variant": "#5a00c6",
+                "on-background": "#e2e2eb",
+                "inverse-primary": "#732ee4",
+                "secondary-fixed-dim": "#6bd8cb",
+                "secondary-container": "#29a195",
+                "outline": "#958da1",
+                "primary-fixed": "#eaddff",
+                "tertiary": "#c0c1ff",
+                "on-tertiary": "#1000a9",
+                "inverse-on-surface": "#2e3037",
+                "tertiary-fixed": "#e1e0ff",
+                "surface-tint": "#d2bbff",
+                "on-tertiary-container": "#e5e3ff",
+                "on-secondary-fixed-variant": "#005049",
+                "surface-variant": "#33343b",
+                "on-error": "#690005",
+                "surface-container-low": "#191b22",
+                "primary-fixed-dim": "#d2bbff",
+                "on-surface-variant": "#ccc3d8",
+                "on-secondary-fixed": "#00201d"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "margin-mobile": "16px",
+                "sidebar-width": "72px",
+                "margin-desktop": "40px",
+                "gutter": "24px",
+                "container-max-width": "1440px"
+        },
+        "fontFamily": {
+                "metadata": [
+                        "Geist"
+                ],
+                "display": [
+                        "Geist"
+                ],
+                "body-lg": [
+                        "Geist"
+                ],
+                "body-md": [
+                        "Geist"
+                ],
+                "headline-md": [
+                        "Geist"
+                ],
+                "headline-lg": [
+                        "Geist"
+                ],
+                "label-sm": [
+                        "JetBrains Mono"
+                ]
+        },
+        "fontSize": {
+                "metadata": [
+                        "13px",
+                        {
+                                "lineHeight": "1.4",
+                                "fontWeight": "400"
+                        }
+                ],
+                "display": [
+                        "48px",
+                        {
+                                "lineHeight": "1.1",
+                                "letterSpacing": "-0.04em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "1.5",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-md": [
+                        "24px",
+                        {
+                                "lineHeight": "1.3",
+                                "letterSpacing": "-0.01em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "label-sm": [
+                        "12px",
+                        {
+                                "lineHeight": "1",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "500"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+    body {
+        background-color: #0f1117;
+    }
+    .glass-panel {
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .glass-input {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-input:focus {
+        border-color: #6bd8cb;
+        box-shadow: 0 0 0 4px rgba(107, 216, 203, 0.1);
+        outline: none;
+    }
+    .primary-btn {
+        background: linear-gradient(135deg, #d2bbff 0%, #6bd8cb 100%);
+        color: #003732;
+    }
+    .primary-btn:hover {
+        box-shadow: 0 0 20px rgba(210, 187, 255, 0.3);
+    }
+    .gradient-text {
+        background: linear-gradient(to right, #d2bbff, #6bd8cb);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+</style>
+<style data-stitch-cursor=""></style><style data-stitch-scroll-lock=""></style></head>
+<body class="text-on-surface font-body-md min-h-screen flex overflow-hidden">
+<!-- SideNavBar -->
+<nav class="w-sidebar-width h-full fixed left-0 top-0 border-r border-white/10 bg-surface/80 backdrop-blur-[12px] flex flex-col items-center py-gutter space-y-8 z-50">
+<!-- Brand Logo -->
+<div class="font-display text-display text-primary drop-shadow-[0_0_10px_rgba(210,187,255,0.3)] mb-4">
+            L
+        </div>
+<!-- Navigation Tabs -->
+<div class="flex flex-col space-y-4 w-full">
+<!-- Inactive Tab: Dashboard -->
+<button class="text-on-surface-variant/60 flex items-center justify-center py-4 hover:text-on-surface hover:bg-white/5 transition-all scale-95 active:scale-90 w-full group">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">grid_view</span>
+</button>
+<!-- Inactive Tab: Inventory -->
+<button class="text-on-surface-variant/60 flex items-center justify-center py-4 hover:text-on-surface hover:bg-white/5 transition-all scale-95 active:scale-90 w-full group">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">inventory_2</span>
+</button>
+<!-- Active Tab: Orders (Receipt) -->
+<button class="relative text-on-surface before:content-[''] before:absolute before:left-0 before:w-[3px] before:h-8 before:bg-primary before:shadow-[0_0_15px_rgba(210,187,255,0.8)] before:rounded-r-full flex items-center justify-center py-4 w-full group">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+</button>
+<!-- Inactive Tab: Customers -->
+<button class="text-on-surface-variant/60 flex items-center justify-center py-4 hover:text-on-surface hover:bg-white/5 transition-all scale-95 active:scale-90 w-full group">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">group</span>
+</button>
+<!-- Inactive Tab: Analytics -->
+<button class="text-on-surface-variant/60 flex items-center justify-center py-4 hover:text-on-surface hover:bg-white/5 transition-all scale-95 active:scale-90 w-full group">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">leaderboard</span>
+</button>
+<button class="text-on-surface-variant/60 flex items-center justify-center py-4 hover:text-on-surface hover:bg-white/5 transition-all scale-95 active:scale-90 w-full group mt-auto">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">settings</span>
+</button>
+</div>
+<div class="mt-auto pt-8 border-t border-white/5 w-full flex justify-center">
+<button class="text-on-surface-variant/60 flex items-center justify-center py-4 hover:text-on-surface hover:bg-white/5 transition-all scale-95 active:scale-90 w-full group">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">logout</span>
+</button>
+</div>
+</nav>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-72px)] h-16 bg-surface/60 backdrop-blur-xl border-b border-outline-variant/10 flex justify-between items-center px-gutter ml-sidebar-width z-40">
+<div class="font-display text-display text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary font-bold" style="opacity: 1;">Lumina POS</div>
+<div class="flex items-center space-x-6">
+<div class="font-label-sm text-label-sm text-on-surface-variant">04:20:15</div>
+<button class="text-on-surface-variant hover:bg-surface-container-highest transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/30">
+<img alt="Cashier Portrait" class="w-full h-full object-cover" data-alt="A close-up portrait of a professional male cashier with short dark hair and a neat beard, wearing a dark collared shirt. He is softly lit by cool, diffuse studio lighting. The background is a blurred, dark gray setting, emphasizing his focused yet friendly expression. High-resolution corporate headshot style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6lu7speFd63qUk2oNt7HnwHJr7v1Bp5kXrX3EQDVck6FXY4ribC2kK1bITj7T54I5jHjm1QoNLHaZVxgGu_2y-HRagJE7JbnNy3JqDyYB7hYItfnDJ8167qJnOf7Y2NTBKsKLv86QWkNAgKFpeg7mJHuG6w0yWUzRiFasOFl9WJgETxW076beQrm2T8hYP0VzPfJN4Ei0GIwJk9u32768gDzA0vP1BkB5Z7w2-lQAsYyOO5H5tpr01zJRU2d2pTsrNRI_kzwKQrzZ"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-sidebar-width mt-16 p-gutter flex-1 h-[calc(100vh-64px)] flex gap-gutter overflow-hidden">
+<!-- LEFT PANEL: Order Summary -->
+<div class="w-[55%] glass-panel rounded-xl flex flex-col h-full overflow-hidden">
+<div class="p-6 border-b border-outline-variant/10 flex justify-between items-end">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-1">Order #8492-X</h2>
+<div class="font-metadata text-metadata text-on-surface-variant flex items-center space-x-4">
+<span class="">Cashier: Alex</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="">14:30 PM</span>
+</div>
+</div>
+</div>
+<!-- Itemized List -->
+<div class="flex-1 overflow-y-auto p-6 space-y-4">
+<div class="glass-card rounded-lg p-3 flex items-center gap-4">
+<div class="w-16 h-16 rounded bg-surface-container-high overflow-hidden shrink-0">
+<img alt="Eco Bottle" class="w-full h-full object-cover" data-alt="A sleek, matte black reusable eco-friendly water bottle standing upright on a clean, dark surface. The bottle has a minimalist design with a subtle metallic cap. Soft, directional lighting highlights its cylindrical shape against a deep charcoal background. Professional product photography aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-N8Px39D_aUcPysc1KOy3fhMG77bY7vrqzdEWIPf1IubAS8zCWIAPi16C0l8jnY2gMWGaBAVRnFhQ-yFFfffSO2WipHSgFXY0KFC0F9sfi7BEEgK1zedq4Lcw-uHZhm67Re6nQg_bk5bx-0JmuMK2WSkgKlGkqthJAbH5HUZy3ZnAqi0FZWnxiL0ldgeYuU5YrYFKZtkMOvT1f-TGz3DiIyIXqgeYkPBqU36goWPfPmOSxwOJeJJ3753KKFgXAPwQP2POei3dDY_n"/>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="font-body-lg text-body-lg text-on-surface truncate">Premium Eco Bottle</h3>
+<p class="font-metadata text-metadata text-on-surface-variant">Matte Black • 750ml</p>
+</div>
+<div class="flex items-center gap-3 shrink-0">
+<span class="font-label-sm text-label-sm px-2 py-1 bg-primary/10 border border-primary/20 text-primary rounded">x2</span>
+<div class="text-right w-20">
+<div class="font-body-md text-body-md text-on-surface">$35.00</div>
+<div class="font-metadata text-metadata text-on-surface-variant">$70.00</div>
+</div>
+</div>
+</div>
+<div class="glass-card rounded-lg p-3 flex items-center gap-4">
+<div class="w-16 h-16 rounded bg-surface-container-high overflow-hidden shrink-0">
+<img alt="Wireless Keyboard" class="w-full h-full object-cover" data-alt="A top-down view of a modern, low-profile mechanical wireless keyboard with dark gray keycaps. The keyboard rests on a dark, textured desk mat. Subtle, cool-toned ambient light reflects off the edges of the keys. The composition is clean and tech-focused." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzh--zAiknFoRPfbHyeiu7oQhsII-8Skb88wGP6JNf_r1hlJs-VvqoZNWoZjEoIEyYTUpa5upaV2tRLXjWpD9oQ5RSs3EO70jmYnomhzqT6ZrsmB2w9AB8GmVRIKBvzSw6nMvhUl4ldwWYSvFoOGF6Q6xd3rK6zDzI8LvcJHUcblJbUakzIh3GSLrnD25MOvB7ij5i3wAEkmhSbd9qXaOjH60MeswIBb1TLfo00PvMxD-FYPlQO_q2Gqm7S5Bn79WMeZxBsM48oi2u"/>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="font-body-lg text-body-lg text-on-surface truncate">Pro Wireless Keyboard</h3>
+<p class="font-metadata text-metadata text-on-surface-variant">Space Gray • Tactile Switches</p>
+</div>
+<div class="flex items-center gap-3 shrink-0">
+<span class="font-label-sm text-label-sm px-2 py-1 bg-primary/10 border border-primary/20 text-primary rounded">x1</span>
+<div class="text-right w-20">
+<div class="font-body-md text-body-md text-on-surface">$140.00</div>
+<div class="font-metadata text-metadata text-on-surface-variant">$140.00</div>
+</div>
+</div>
+</div>
+<div class="glass-card rounded-lg p-3 flex items-center gap-4">
+<div class="w-16 h-16 rounded bg-surface-container-high overflow-hidden shrink-0">
+<img alt="Smart Watch" class="w-full h-full object-cover" data-alt="A close-up shot of a modern smartwatch with a dark, circular digital display showing a minimalist clock face. The watch is attached to a textured black silicone strap. It is positioned diagonally across the frame against a completely black background. Dramatic side lighting emphasizes the metallic casing." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZzdI3CmxxGx5xT0Nd6cHC1LUqm1gogfIQpnNgtjNULTx58o1FUF24GBIIfdm0JV1c8ZumMSPrQN0Atifl3i4FRUnzL-sYnMglj0opkO-G9We-nz3O0uFJp6sZNq_xIVTOZ1F62VnDYrgelJ0bM_tNV_lwxpATccEGLMVChliZsCd_ttqt6v-T1AlAFvzZxXKfayllTnsX5MvE7xPbpeTlGPKGObcFpGEhC23cmYoQB-6JEr4-RZ43skUCOwmAmxgmfFPZiGCgwp4n"/>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="font-body-lg text-body-lg text-on-surface truncate">Quantum Smart Watch</h3>
+<p class="font-metadata text-metadata text-on-surface-variant">Obsidian • 44mm</p>
+</div>
+<div class="flex items-center gap-3 shrink-0">
+<span class="font-label-sm text-label-sm px-2 py-1 bg-primary/10 border border-primary/20 text-primary rounded">x1</span>
+<div class="text-right w-20">
+<div class="font-body-md text-body-md text-on-surface">$250.00</div>
+<div class="font-metadata text-metadata text-on-surface-variant">$250.00</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Summary Box -->
+<div class="p-6 bg-surface-container-low/50 border-t border-outline-variant/10">
+<div class="space-y-2 mb-4">
+<div class="flex justify-between font-body-md text-body-md text-on-surface-variant">
+<span class="">Subtotal</span>
+<span class="">$460.00</span>
+</div>
+<div class="flex justify-between font-body-md text-body-md text-on-surface-variant">
+<span class="">Tax (18%)</span>
+<span class="">$82.80</span>
+</div>
+</div>
+<div class="flex justify-between items-end border-t border-outline-variant/20 pt-4">
+<span class="font-headline-md text-headline-md text-on-surface">Total</span>
+<span class="font-display text-display text-secondary">$542.80</span>
+</div>
+</div>
+</div>
+<!-- RIGHT PANEL: Payment Method -->
+<div class="w-[45%] flex flex-col gap-6">
+<div class="glass-panel rounded-xl flex-1 flex flex-col p-6">
+<!-- Tab Pills -->
+<div class="flex space-x-2 p-1 bg-black/30 rounded-lg border border-white/5 mb-8">
+<button class="flex-1 py-2 font-body-md text-body-md rounded-md bg-gradient-to-r from-primary to-secondary text-on-secondary font-semibold shadow-[0_0_15px_rgba(210,187,255,0.2)]">
+                        Cash
+                    </button>
+<button class="flex-1 py-2 font-body-md text-body-md rounded-md text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-colors">
+                        Card
+                    </button>
+<button class="flex-1 py-2 font-body-md text-body-md rounded-md text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-colors">
+                        Split
+                    </button>
+</div>
+<!-- Cash View -->
+<div class="flex-1 flex flex-col justify-between">
+<div>
+<div class="mb-6 relative">
+<label class="font-label-sm text-label-sm text-on-surface-variant block mb-2">Amount Tendered</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 font-headline-md text-headline-md text-on-surface-variant">$</span>
+<input class="w-full glass-input rounded-lg pl-10 pr-4 py-4 font-headline-md text-headline-md text-on-surface text-right" readonly="" type="text" value="600.00"/>
+</div>
+</div>
+<div class="flex justify-between items-center p-4 rounded-lg border border-secondary/30 bg-secondary/5 mb-8">
+<span class="font-body-lg text-body-lg text-on-surface">Change Due</span>
+<span class="font-headline-lg text-headline-lg text-secondary">$57.20</span>
+</div>
+</div>
+<!-- Numpad -->
+<div class="grid grid-cols-3 gap-3 mb-6">
+<button class="glass-card py-4 font-headline-md text-headline-md text-on-surface rounded-lg hover:bg-white/10 transition-colors">1</button>
+<button class="glass-card py-4 font-headline-md text-headline-md text-on-surface rounded-lg hover:bg-white/10 transition-colors">2</button>
+<button class="glass-card py-4 font-headline-md text-headline-md text-on-surface rounded-lg hover:bg-white/10 transition-colors">3</button>
+<button class="glass-card py-4 font-headline-md text-headline-md text-on-surface rounded-lg hover:bg-white/10 transition-colors">4</button>
+<button class="glass-card py-4 font-headline-md text-headline-md text-on-surface rounded-lg hover:bg-white/10 transition-colors">5</button>
+<button class="glass-card py-4 font-headline-md text-headline-md text-on-surface rounded-lg hover:bg-white/10 transition-colors">6</button>
+<button class="glass-card py-4 font-headline-md text-headline-md text-on-surface rounded-lg hover:bg-white/10 transition-colors">7</button>
+<button class="glass-card py-4 font-headline-md text-headline-md text-on-surface rounded-lg hover:bg-white/10 transition-colors">8</button>
+<button class="glass-card py-4 font-headline-md text-headline-md text-on-surface rounded-lg hover:bg-white/10 transition-colors">9</button>
+<button class="glass-card py-4 font-headline-md text-headline-md text-on-surface rounded-lg hover:bg-white/10 transition-colors text-error">C</button>
+<button class="glass-card py-4 font-headline-md text-headline-md text-on-surface rounded-lg hover:bg-white/10 transition-colors">0</button>
+<button class="glass-card py-4 font-headline-md text-headline-md text-on-surface rounded-lg hover:bg-white/10 transition-colors flex justify-center items-center">
+<span class="material-symbols-outlined">backspace</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Bottom Actions -->
+<div class="flex flex-col items-center gap-4">
+<button class="w-full primary-btn py-4 rounded-xl font-headline-md text-headline-md font-bold flex justify-center items-center gap-2 transition-all duration-300">
+                    Confirm Payment
+                    <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<button class="font-body-md text-body-md text-on-surface-variant hover:text-error transition-colors">
+                    Cancel Transaction
+                </button>
+</div>
+</div>
+</main>
+</body></html>
