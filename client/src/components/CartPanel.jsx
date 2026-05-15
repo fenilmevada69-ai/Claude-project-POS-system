@@ -45,19 +45,22 @@ export default function CartPanel({ setProducts, fetchProducts }) {
     try {
       const order = await checkout();
       
-      // 1. Clear cart
-      clearCart();
-
-      // 2. Optimistic Update
-      if (setProducts) {
-        setProducts(prev => prev.map(p => {
-          const cartItem = items.find(c => c._id === p._id);
-          if (cartItem) {
-            return { ...p, stock: p.stock - cartItem.quantity };
-          }
-          return p;
-        }));
+      // 1. Optimistic stock update (using cart data — cart must still exist here)
+      if (setProducts && Array.isArray(items)) {
+        setProducts(prev => {
+          if (!Array.isArray(prev)) return prev;
+          return prev.map(p => {
+            const cartItem = items.find(c => c._id === p._id);
+            if (cartItem) {
+              return { ...p, stock: p.stock - cartItem.quantity };
+            }
+            return p;
+          });
+        });
       }
+
+      // 2. Clear cart
+      clearCart();
 
       // 3. Fetch fresh data from backend
       if (fetchProducts) {

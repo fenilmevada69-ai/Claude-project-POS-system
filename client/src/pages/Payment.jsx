@@ -5,7 +5,7 @@ import CartPanel from '../components/CartPanel';
 import ProductCard from '../components/ProductCard';
 
 export default function Payment() {
-  const { products, loading, params, setParams } = useProducts({ limit: 50 });
+  const { products, loading, params, setParams, setProducts, fetchProducts } = useProducts({ limit: 50 });
   const { addItem, items } = useCart();
   const [search, setSearch] = useState('');
 
