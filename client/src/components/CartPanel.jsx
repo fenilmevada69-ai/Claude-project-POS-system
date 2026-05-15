@@ -81,7 +81,11 @@ export default function CartPanel({ setProducts, fetchProducts }) {
         <h3 className="receipt-title">Payment Complete!</h3>
         <p className="receipt-order">{success.orderNumber}</p>
         <p className="receipt-total">{fmt(success.total)}</p>
-        <button className="btn btn-primary btn-full mt-4" onClick={() => setSuccess(null)}>
+        <button 
+          className="btn btn-primary mt-6" 
+          style={{ width: '200px', marginInline: 'auto' }}
+          onClick={() => setSuccess(null)}
+        >
           New Transaction
         </button>
       </div>
