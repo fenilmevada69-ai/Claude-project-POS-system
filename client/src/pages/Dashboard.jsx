@@ -1,7 +1,7 @@
 import { useReports } from '../hooks/useReports';
 import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, Legend,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, Legend, Label,
 } from 'recharts';
 
 const KPI_COLORS = ['#6366f1', '#22d3ee', '#f59e0b', '#10b981'];
@@ -57,13 +57,7 @@ export default function Dashboard() {
         <div className="chart-card chart-wide">
           <h3 className="chart-title">Revenue Over Time</h3>
           <ResponsiveContainer width="100%" height={260}>
-            <AreaChart data={revenue}>
-              <defs>
-                <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
-                </linearGradient>
-              </defs>
+            <BarChart data={revenue}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
               <XAxis dataKey="_id" tick={{ fontSize: 11, fill: '#94a3b8' }} />
               <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
@@ -72,22 +66,42 @@ export default function Dashboard() {
                 labelStyle={{ color: '#e2e8f0' }}
                 formatter={(v) => [formatCurrency(v), 'Revenue']}
               />
-              <Area type="monotone" dataKey="revenue" stroke="#6366f1" fill="url(#revGrad)" strokeWidth={2} />
-            </AreaChart>
+              <Bar dataKey="revenue" fill="#6366f1" radius={[4, 4, 0, 0]} maxBarSize={80} />
+            </BarChart>
           </ResponsiveContainer>
         </div>
 
-        {/* Payment Methods Pie */}
+        {/* Payment Methods Donut */}
         <div className="chart-card chart-narrow">
           <h3 className="chart-title">Payment Methods</h3>
           <ResponsiveContainer width="100%" height={260}>
             <PieChart>
-              <Pie data={paymentMethods} dataKey="revenue" nameKey="_id" cx="50%" cy="50%" outerRadius={90} label={({ _id, percent }) => `${_id} ${(percent * 100).toFixed(0)}%`}>
+              <Pie 
+                data={paymentMethods} 
+                dataKey="revenue" 
+                nameKey="_id" 
+                cx="50%" 
+                cy="50%" 
+                innerRadius={60}
+                outerRadius={90} 
+                paddingAngle={paymentMethods.length === 1 ? 0 : 5}
+                stroke="#0f172a"
+                strokeWidth={2}
+              >
                 {paymentMethods.map((_, i) => (
                   <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                 ))}
+                {paymentMethods.length > 0 && (
+                  <Label 
+                    value={`${(Math.max(...paymentMethods.map(m => m.revenue)) / (paymentMethods.reduce((a, b) => a + b.revenue, 0) || 1) * 100).toFixed(0)}%`}
+                    position="center" 
+                    fill="#e2e8f0" 
+                    style={{ fontSize: '20px', fontWeight: 'bold' }} 
+                  />
+                )}
               </Pie>
               <Tooltip formatter={(v) => formatCurrency(v)} contentStyle={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: 8 }} />
+              <Legend verticalAlign="bottom" height={36} iconType="circle" />
             </PieChart>
           </ResponsiveContainer>
         </div>

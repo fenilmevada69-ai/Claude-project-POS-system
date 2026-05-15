@@ -34,12 +34,12 @@ const orderSchema = new mongoose.Schema(
     paymentStatus: {
       type: String,
       enum: ['pending', 'completed', 'failed', 'refunded'],
-      default: 'pending',
+      default: 'completed',
     },
     status: {
       type: String,
       enum: ['pending', 'processing', 'completed', 'cancelled', 'refunded'],
-      default: 'pending',
+      default: 'completed',
     },
     cashier: {
       type: mongoose.Schema.Types.ObjectId,
