@@ -323,6 +323,19 @@ input:focus, textarea:focus { border-color: var(--brand); }
 .btn-checkout { margin: .5rem .75rem .75rem; width: calc(100% - 1.5rem); padding: .7rem; font-size: .9rem; border-radius: var(--radius); }
 .mt-2 { margin-top: .5rem; }
 
+/* Discount % indicator */
+.totals-discount { color: var(--success) !important; }
+.totals-discount span:last-child { font-weight: 600; }
+.discount-pct {
+  font-style: normal;
+  font-size: .72rem;
+  color: var(--success);
+  background: rgba(16,185,129,.12);
+  padding: .05rem .35rem;
+  border-radius: 4px;
+  margin-left: .3rem;
+}
+
 /* Receipt */
 .receipt-panel { align-items: center; justify-content: center; gap: .75rem; }
 .receipt-icon  { font-size: 3rem; }

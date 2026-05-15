@@ -1,19 +1,31 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useProducts } from '../hooks/useProducts';
+import { categoriesAPI } from '../services/api';
 
 const formatCurrency = (v) =>
   new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(v);
 
-const EMPTY_FORM = { name: '', sku: '', price: '', costPrice: '', stock: '', lowStockThreshold: 10, taxRate: 0, category: '', description: '' };
+const EMPTY_FORM = {
+  name: '', sku: '', price: '', costPrice: '', stock: '',
+  lowStockThreshold: 10, taxRate: 0, category: '', description: '',
+};
 
 export default function Inventory() {
-  const { products, loading, error, createProduct, updateProduct, deleteProduct, adjustStock, refetch } = useProducts({ limit: 100 });
-  const [search, setSearch] = useState('');
-  const [modal, setModal] = useState(null); // null | 'add' | 'edit' | 'stock'
+  const { products, loading, error, createProduct, updateProduct, deleteProduct, adjustStock } = useProducts({ limit: 100 });
+  const [categories, setCategories] = useState([]);
+  const [search, setSearch]     = useState('');
+  const [modal, setModal]       = useState(null); // null | 'add' | 'edit' | 'stock'
   const [selected, setSelected] = useState(null);
-  const [form, setForm] = useState(EMPTY_FORM);
+  const [form, setForm]         = useState(EMPTY_FORM);
   const [stockAdj, setStockAdj] = useState({ adjustment: 0, reason: '' });
-  const [saving, setSaving] = useState(false);
+  const [saving, setSaving]     = useState(false);
+
+  // ── Fetch categories once on mount ─────────────────────────────────────────
+  useEffect(() => {
+    categoriesAPI.getAll()
+      .then(({ data }) => setCategories(data.categories || []))
+      .catch(() => setCategories([])); // silently fall back to General option
+  }, []);
 
   const filtered = products.filter(
     (p) =>
@@ -21,16 +33,24 @@ export default function Inventory() {
       p.sku.toLowerCase().includes(search.toLowerCase())
   );
 
-  const openAdd = () => { setForm(EMPTY_FORM); setModal('add'); };
-  const openEdit = (p) => { setSelected(p); setForm({ name: p.name, sku: p.sku, price: p.price, costPrice: p.costPrice, stock: p.stock, lowStockThreshold: p.lowStockThreshold, taxRate: p.taxRate, category: p.category?._id || '', description: p.description }); setModal('edit'); };
-  const openStock = (p) => { setSelected(p); setStockAdj({ adjustment: 0, reason: '' }); setModal('stock'); };
+  const openAdd  = () => { setForm(EMPTY_FORM); setModal('add'); };
+  const openEdit = (p) => {
+    setSelected(p);
+    setForm({
+      name: p.name, sku: p.sku, price: p.price, costPrice: p.costPrice,
+      stock: p.stock, lowStockThreshold: p.lowStockThreshold, taxRate: p.taxRate,
+      category: p.category?._id || '', description: p.description,
+    });
+    setModal('edit');
+  };
+  const openStock  = (p) => { setSelected(p); setStockAdj({ adjustment: 0, reason: '' }); setModal('stock'); };
   const closeModal = () => { setModal(null); setSelected(null); };
 
   const handleSave = async () => {
     setSaving(true);
     try {
       if (modal === 'add') await createProduct(form);
-      else await updateProduct(selected._id, form);
+      else                  await updateProduct(selected._id, form);
       closeModal();
     } catch (e) { alert(e.response?.data?.message || 'Save failed'); }
     finally { setSaving(false); }
@@ -65,7 +85,7 @@ export default function Inventory() {
       </div>
 
       {loading && <div className="page-loading"><div className="spinner" /></div>}
-      {error && <div className="alert alert-error">{error}</div>}
+      {error   && <div className="alert alert-error">{error}</div>}
 
       <div className="table-wrap">
         <table className="data-table">
@@ -86,7 +106,7 @@ export default function Inventory() {
                 <td>{p.category?.name || '—'}</td>
                 <td><span className={`status-pill ${p.isActive ? 'active' : 'inactive'}`}>{p.isActive ? 'Active' : 'Inactive'}</span></td>
                 <td className="actions-cell">
-                  <button className="btn-icon" title="Edit" onClick={() => openEdit(p)}>✏️</button>
+                  <button className="btn-icon" title="Edit"         onClick={() => openEdit(p)}>✏️</button>
                   <button className="btn-icon" title="Adjust Stock" onClick={() => openStock(p)}>📦</button>
                   <button className="btn-icon btn-danger" title="Delete" onClick={() => handleDelete(p._id)}>🗑️</button>
                 </td>
@@ -99,7 +119,7 @@ export default function Inventory() {
         </table>
       </div>
 
-      {/* Add / Edit Modal */}
+      {/* ── Add / Edit Modal ─────────────────────────────────────────────────── */}
       {(modal === 'add' || modal === 'edit') && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
@@ -109,19 +129,38 @@ export default function Inventory() {
             </div>
             <div className="modal-body grid-2">
               {[
-                ['name', 'Product Name', 'text'],
-                ['sku', 'SKU', 'text'],
-                ['price', 'Selling Price (₹)', 'number'],
-                ['costPrice', 'Cost Price (₹)', 'number'],
-                ['stock', 'Stock Qty', 'number'],
-                ['lowStockThreshold', 'Low Stock Alert', 'number'],
-                ['taxRate', 'Tax Rate (%)', 'number'],
+                ['name',              'Product Name',      'text'],
+                ['sku',               'SKU',               'text'],
+                ['price',             'Selling Price (₹)', 'number'],
+                ['costPrice',         'Cost Price (₹)',    'number'],
+                ['stock',             'Stock Qty',         'number'],
+                ['lowStockThreshold', 'Low Stock Alert',   'number'],
+                ['taxRate',           'Tax Rate (%)',       'number'],
               ].map(([key, label, type]) => (
                 <div className="form-group" key={key}>
                   <label>{label}</label>
-                  <input type={type} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />
+                  <input
+                    type={type}
+                    value={form[key]}
+                    onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+                  />
                 </div>
               ))}
+
+              {/* Category Dropdown */}
+              <div className="form-group">
+                <label>Category</label>
+                <select
+                  value={form.category}
+                  onChange={(e) => setForm({ ...form, category: e.target.value })}
+                >
+                  <option value="">— General / None —</option>
+                  {categories.map((cat) => (
+                    <option key={cat._id} value={cat._id}>{cat.name}</option>
+                  ))}
+                </select>
+              </div>
+
               <div className="form-group span-2">
                 <label>Description</label>
                 <textarea rows={2} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
@@ -135,7 +174,7 @@ export default function Inventory() {
         </div>
       )}
 
-      {/* Stock Adjustment Modal */}
+      {/* ── Stock Adjustment Modal ───────────────────────────────────────────── */}
       {modal === 'stock' && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal modal-sm" onClick={(e) => e.stopPropagation()}>

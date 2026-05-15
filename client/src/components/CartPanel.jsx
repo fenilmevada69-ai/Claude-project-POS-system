@@ -14,7 +14,7 @@ const PAYMENT_METHODS = [
 
 export default function CartPanel() {
   const {
-    items, subtotal, taxAmount, total, discount, paymentMethod,
+    items, subtotal, taxAmount, discountAmount, total, discount, paymentMethod,
     removeItem, updateQty, setDiscount, setPaymentMethod, clearCart,
   } = useCart();
 
@@ -84,12 +84,14 @@ export default function CartPanel() {
 
       {/* Discount */}
       <div className="cart-discount">
-        <label>Discount (₹)</label>
+        <label>Discount (%)</label>
         <input
           type="number"
           min={0}
+          max={100}
+          placeholder="0"
           value={discount}
-          onChange={(e) => setDiscount(Number(e.target.value))}
+          onChange={(e) => setDiscount(Math.min(100, Math.max(0, Number(e.target.value))))}
           className="discount-input"
         />
       </div>
@@ -111,7 +113,12 @@ export default function CartPanel() {
       <div className="cart-totals">
         <div className="totals-row"><span>Subtotal</span><span>{fmt(subtotal)}</span></div>
         <div className="totals-row"><span>Tax</span><span>{fmt(taxAmount)}</span></div>
-        <div className="totals-row"><span>Discount</span><span>−{fmt(discount)}</span></div>
+        {discount > 0 && (
+          <div className="totals-row totals-discount">
+            <span>Discount <em className="discount-pct">({discount}%)</em></span>
+            <span>−{fmt(discountAmount)}</span>
+          </div>
+        )}
         <div className="totals-row totals-grand"><span>Total</span><span>{fmt(total)}</span></div>
       </div>
 

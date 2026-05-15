@@ -69,10 +69,12 @@ export const CartProvider = ({ children }) => {
   const clearCart = useCallback(() => dispatch({ type: 'CLEAR' }), []);
 
   // Derived totals
-  const subtotal = state.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
-  const taxAmount = state.items.reduce((sum, i) => sum + (i.price * i.quantity * (i.taxRate || 0)) / 100, 0);
-  const total = subtotal + taxAmount - state.discount;
-  const itemCount = state.items.reduce((sum, i) => sum + i.quantity, 0);
+  const subtotal      = state.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+  const taxAmount     = state.items.reduce((sum, i) => sum + (i.price * i.quantity * (i.taxRate || 0)) / 100, 0);
+  // discount is stored as a percentage (0-100)
+  const discountAmount = (subtotal * Math.min(Math.max(state.discount, 0), 100)) / 100;
+  const total         = subtotal + taxAmount - discountAmount;
+  const itemCount     = state.items.reduce((sum, i) => sum + i.quantity, 0);
 
   return (
     <CartContext.Provider
@@ -80,6 +82,7 @@ export const CartProvider = ({ children }) => {
         ...state,
         subtotal,
         taxAmount,
+        discountAmount,
         total,
         itemCount,
         addItem,
