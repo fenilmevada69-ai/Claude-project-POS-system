@@ -6,8 +6,17 @@ import ProductCard from '../components/ProductCard';
 
 export default function Payment() {
   const { products, loading, params, setParams } = useProducts({ limit: 50 });
-  const { addItem } = useCart();
+  const { addItem, items } = useCart();
   const [search, setSearch] = useState('');
+
+  const handleAddToCart = (product) => {
+    const existing = items.find((i) => i._id === product._id);
+    if (existing && existing.quantity >= product.stock) {
+      alert(`Maximum stock reached for ${product.name}`);
+      return;
+    }
+    addItem(product);
+  };
 
   const filtered = products.filter(
     (p) =>
@@ -35,7 +44,7 @@ export default function Payment() {
         ) : (
           <div className="product-grid">
             {filtered.map((product) => (
-              <ProductCard key={product._id} product={product} onAdd={() => addItem(product)} />
+              <ProductCard key={product._id} product={product} onAdd={() => handleAddToCart(product)} />
             ))}
             {filtered.length === 0 && <p className="empty-state">No products found.</p>}
           </div>
@@ -43,7 +52,7 @@ export default function Payment() {
       </div>
 
       {/* Right: Cart */}
-      <CartPanel />
+      <CartPanel setProducts={setProducts} fetchProducts={fetchProducts} />
     </div>
   );
 }

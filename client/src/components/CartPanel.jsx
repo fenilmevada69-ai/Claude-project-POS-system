@@ -12,7 +12,7 @@ const PAYMENT_METHODS = [
   { id: 'wallet', label: 'Wallet', icon: '👛' },
 ];
 
-export default function CartPanel() {
+export default function CartPanel({ setProducts, fetchProducts }) {
   const {
     items, subtotal, taxAmount, discountAmount, total, discount, paymentMethod,
     removeItem, updateQty, setDiscount, setPaymentMethod, clearCart,
@@ -22,14 +22,51 @@ export default function CartPanel() {
   const [success, setSuccess] = useState(null);
   const [error, setError]     = useState('');
 
+  const handleIncrement = (item) => {
+    if (item.quantity >= item.stock) {
+      alert(`Only ${item.stock} units available for ${item.name}`);
+      return;
+    }
+    updateQty(item._id, item.quantity + 1);
+  };
+
   const handleCheckout = async () => {
     if (items.length === 0) return;
     setError('');
+
+    // Final stock validation loop
+    for (const item of items) {
+      if (item.quantity > item.stock) {
+        setError(`Insufficient stock for ${item.name}. Available: ${item.stock}`);
+        return;
+      }
+    }
+
     try {
       const order = await checkout();
+      
+      // 1. Clear cart
+      clearCart();
+
+      // 2. Optimistic Update
+      if (setProducts) {
+        setProducts(prev => prev.map(p => {
+          const cartItem = items.find(c => c._id === p._id);
+          if (cartItem) {
+            return { ...p, stock: p.stock - cartItem.quantity };
+          }
+          return p;
+        }));
+      }
+
+      // 3. Fetch fresh data from backend
+      if (fetchProducts) {
+        fetchProducts();
+      }
+
       setSuccess(order);
     } catch (e) {
-      setError(e.response?.data?.message || 'Checkout failed');
+      setError(e.response?.data?.message || e.response?.data?.error || 'Checkout failed');
     }
   };
 
@@ -75,7 +112,12 @@ export default function CartPanel() {
             <div className="cart-item-controls">
               <button className="qty-btn" onClick={() => updateQty(item._id, item.quantity - 1)}>−</button>
               <span className="qty-val">{item.quantity}</span>
-              <button className="qty-btn" onClick={() => updateQty(item._id, item.quantity + 1)}>+</button>
+              <button
+                className="qty-btn"
+                onClick={() => handleIncrement(item)}
+              >
+                +
+              </button>
               <button className="remove-btn" onClick={() => removeItem(item._id)}>✕</button>
             </div>
           </div>

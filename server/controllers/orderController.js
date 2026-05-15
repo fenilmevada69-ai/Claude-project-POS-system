@@ -17,7 +17,7 @@ exports.createOrder = async (req, res, next) => {
       const product = await Product.findById(item.product);
       if (!product) return res.status(404).json({ success: false, message: `Product ${item.product} not found` });
       if (product.stock < item.quantity) {
-        return res.status(400).json({ success: false, message: `Insufficient stock for ${product.name}` });
+        return res.status(400).json({ success: false, error: `Insufficient stock for ${product.name}. Available: ${product.stock}` });
       }
 
       const itemSubtotal = product.price * item.quantity;
