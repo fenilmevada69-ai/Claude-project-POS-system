@@ -39,10 +39,13 @@ export default function Payment() {
       if (response.data.success) {
         handleAddToCart(response.data.product);
         setSearch(''); // Clear search after successful scan
+        showToast(`✓ Barcode scanned: ${code}`, 'success');
+        return true;
       }
+      return false;
     } catch (error) {
-      const message = error.response?.data?.message || 'Product not found';
       showToast(`Product not found for barcode: ${code}`, 'error');
+      return false;
     }
   };
 
@@ -110,9 +113,37 @@ export default function Payment() {
           <div className="product-panel-header flex items-center justify-between gap-4">
             <h2 className="page-title mb-0">Point of Sale</h2>
             <div className="flex-1 max-w-xl flex items-center gap-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input className="search-input pl-10" type="text" placeholder="Search products…" disabled />
+              <div style={{ position: 'relative', width: '100%', maxWidth: '500px' }}>
+                <div style={{
+                  position: 'absolute',
+                  left: '14px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: '#6b7280',
+                  pointerEvents: 'none',
+                  display: 'flex',
+                  alignItems: 'center'
+                }}>
+                  <Search size={18} />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search products…"
+                  style={{
+                    width: '100%',
+                    paddingLeft: '42px',
+                    paddingRight: '16px',
+                    paddingTop: '10px',
+                    paddingBottom: '10px',
+                    backgroundColor: 'rgba(255,255,255,0.06)',
+                    border: '1px solid rgba(255,255,255,0.12)',
+                    borderRadius: '10px',
+                    color: '#e2e8f0',
+                    fontSize: '14px',
+                    outline: 'none',
+                  }}
+                  disabled
+                />
               </div>
             </div>
           </div>
@@ -133,17 +164,48 @@ export default function Payment() {
           <h2 className="page-title mb-0">Point of Sale</h2>
           
           <div className="flex-1 max-w-xl flex items-center gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <div style={{ position: 'relative', width: '100%', maxWidth: '500px' }}>
+              <div style={{
+                position: 'absolute',
+                left: '14px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: '#6b7280',
+                pointerEvents: 'none',
+                display: 'flex',
+                alignItems: 'center'
+              }}>
+                <Search size={18} />
+              </div>
               <input
                 ref={searchInputRef}
-                className="search-input pl-10"
                 type="text"
                 placeholder="Search products or scan barcode…"
                 value={search}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
                 autoFocus
+                style={{
+                  width: '100%',
+                  paddingLeft: '42px',
+                  paddingRight: '16px',
+                  paddingTop: '10px',
+                  paddingBottom: '10px',
+                  backgroundColor: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  borderRadius: '10px',
+                  color: '#e2e8f0',
+                  fontSize: '14px',
+                  outline: 'none',
+                }}
+                onFocus={e => {
+                  e.target.style.border = '1px solid rgba(124,58,237,0.6)';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.15)';
+                }}
+                onBlur={e => {
+                  e.target.style.border = '1px solid rgba(255,255,255,0.12)';
+                  e.target.style.boxShadow = 'none';
+                }}
               />
             </div>
             
