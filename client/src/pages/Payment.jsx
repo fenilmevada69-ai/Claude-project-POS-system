@@ -1,18 +1,21 @@
 import { useState } from 'react';
 import { useProducts } from '../hooks/useProducts';
 import { useCart } from '../context/CartContext';
+import { useToast } from '../context/ToastContext';
 import CartPanel from '../components/CartPanel';
 import ProductCard from '../components/ProductCard';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function Payment() {
   const { products, loading, params, setParams, setProducts, fetchProducts } = useProducts({ limit: 50 });
   const { addItem, items } = useCart();
+  const { showToast } = useToast();
   const [search, setSearch] = useState('');
 
   const handleAddToCart = (product) => {
     const existing = items.find((i) => i._id === product._id);
     if (existing && existing.quantity >= product.stock) {
-      alert(`Maximum stock reached for ${product.name}`);
+      showToast(`Maximum stock reached for ${product.name}`, 'error');
       return;
     }
     addItem(product);
@@ -40,7 +43,7 @@ export default function Payment() {
         </div>
 
         {loading ? (
-          <div className="page-loading"><div className="spinner" /></div>
+          <LoadingSpinner fullPage />
         ) : (
           <div className="product-grid">
             {filtered.map((product) => (

@@ -1,4 +1,5 @@
 import { useReports } from '../hooks/useReports';
+import LoadingSpinner from '../components/LoadingSpinner';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, Label,
@@ -10,7 +11,7 @@ const PIE_COLORS = ['#6366f1', '#22d3ee', '#f59e0b', '#10b981', '#f43f5e'];
 export default function Reports() {
   const { summary, revenue, topProducts, paymentMethods, loading, error, period, setPeriod, refetch } = useReports();
 
-  if (loading) return <div className="page-loading"><div className="spinner" /></div>;
+  if (loading) return <LoadingSpinner fullPage />;
   if (error) return <div className="page"><div className="alert alert-error">{error}</div></div>;
 
   return (

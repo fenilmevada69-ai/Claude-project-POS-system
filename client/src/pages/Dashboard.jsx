@@ -1,5 +1,6 @@
 import { useReports } from '../hooks/useReports';
 import { useNavigate } from 'react-router-dom';
+import LoadingSpinner from '../components/LoadingSpinner';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, Label,
@@ -15,7 +16,7 @@ export default function Dashboard() {
   const { summary, revenue, topProducts, paymentMethods, loading, period, setPeriod } = useReports();
   const navigate = useNavigate();
 
-  if (loading) return <div className="page-loading"><div className="spinner" /></div>;
+  if (loading) return <LoadingSpinner fullPage />;
 
   return (
     <div className="page dashboard-page">
