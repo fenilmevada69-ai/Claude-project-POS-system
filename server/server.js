@@ -15,10 +15,23 @@ const reportRoutes = require('./routes/reports');
 const categoryRoutes = require('./routes/categories');
 const userRoutes = require('./routes/users');
 const customerRoutes = require('./routes/customers');
+const shiftRoutes = require('./routes/shifts');
+const expenseRoutes = require('./routes/expenses');
 const path = require('path');
 
 // Connect to MongoDB
 connectDB();
+
+const cron = require('node-cron');
+const { checkAndSendLowStockAlerts } = require('./services/stockAlertService');
+
+// Schedule low stock check every day at 9 AM
+cron.schedule('0 9 * * *', () => {
+  console.log('⏰ Running scheduled low stock check...');
+  checkAndSendLowStockAlerts();
+}, {
+  timezone: process.env.CRON_TIMEZONE || "Asia/Kolkata"
+});
 
 const app = express();
 
@@ -46,6 +59,8 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/customers', customerRoutes);
+app.use('/api/shifts', shiftRoutes);
+app.use('/api/expenses', expenseRoutes);
 
 // ─── 404 Handler ──────────────────────────────────────────────────────────────
 app.use((req, res) => {

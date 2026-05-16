@@ -9,7 +9,13 @@ exports.getProducts = async (req, res, next) => {
 
     const query = { isActive: true };
     if (category) query.category = category;
-    if (search) query.$or = [{ name: new RegExp(search, 'i') }, { sku: new RegExp(search, 'i') }];
+    if (search) {
+      query.$or = [
+        { name: new RegExp(search, 'i') },
+        { sku: new RegExp(search, 'i') },
+        { barcode: search }
+      ];
+    }
     if (lowStock === 'true') query.$expr = { $lte: ['$stock', '$lowStockThreshold'] };
 
     const total = await Product.countDocuments(query);
@@ -97,6 +103,28 @@ exports.adjustStock = async (req, res, next) => {
     await product.save();
 
     res.json({ success: true, product, message: `Stock adjusted by ${adjustment}` });
+  } catch (error) {
+    next(error);
+  }
+};
+// @desc    Get product by barcode
+// @route   GET /api/products/barcode/:barcode
+// @access  Protected
+exports.getProductByBarcode = async (req, res, next) => {
+  try {
+    const product = await Product.findOne({ 
+      barcode: req.params.barcode,
+      isActive: true 
+    }).populate('category', 'name color icon');
+
+    if (!product) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Product not found' 
+      });
+    }
+
+    res.json({ success: true, product });
   } catch (error) {
     next(error);
   }

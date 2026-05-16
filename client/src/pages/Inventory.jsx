@@ -10,7 +10,7 @@ const formatCurrency = (v) =>
   new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(v);
 
 const EMPTY_FORM = {
-  name: '', sku: '', price: '', costPrice: '', stock: '',
+  name: '', sku: '', barcode: '', price: '', costPrice: '', stock: '',
   lowStockThreshold: 10, taxRate: 0, category: '', description: '',
   image: '',
 };
@@ -43,7 +43,7 @@ export default function Inventory() {
   const openEdit = (p) => {
     setSelected(p);
     setForm({
-      name: p.name || '', sku: p.sku || '', price: p.price || '', costPrice: p.costPrice || '',
+      name: p.name || '', sku: p.sku || '', barcode: p.barcode || '', price: p.price || '', costPrice: p.costPrice || '',
       stock: p.stock || 0, lowStockThreshold: p.lowStockThreshold || 10, taxRate: p.taxRate || 0,
       category: p.category?._id || '', description: p.description || '', image: p.image || '',
     });
@@ -73,6 +73,11 @@ export default function Inventory() {
     } finally {
       setUploading(false);
     }
+  };
+
+  const generateBarcode = () => {
+    const random = Math.floor(Math.random() * 9000000000000) + 1000000000000;
+    setForm({ ...form, barcode: random.toString() });
   };
 
   const handleSave = async () => {
@@ -242,6 +247,31 @@ export default function Inventory() {
                     onChange={handleImageUpload} 
                   />
                 </div>
+              </div>
+
+              {/* Barcode Field */}
+              <div className="form-group span-2">
+                <label>Barcode</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    className="flex-1"
+                    placeholder="Enter or generate EAN-13 barcode"
+                    value={form.barcode}
+                    onChange={(e) => setForm({ ...form, barcode: e.target.value })}
+                  />
+                  <button type="button" className="btn btn-ghost" onClick={generateBarcode}>Generate</button>
+                </div>
+                {form.barcode && (
+                  <div className="mt-2 p-2 bg-slate-900/50 rounded border border-white/10 flex flex-col items-center">
+                    <img 
+                      src={`https://barcode.tec-it.com/barcode.ashx?data=${form.barcode}&code=EAN13`} 
+                      alt="Barcode" 
+                      style={{ maxHeight: '60px', filter: 'invert(0.9) brightness(1.5)' }}
+                    />
+                    <span className="text-xs text-slate-400 mt-1">{form.barcode}</span>
+                  </div>
+                )}
               </div>
 
               {[

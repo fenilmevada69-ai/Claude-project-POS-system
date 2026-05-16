@@ -1,5 +1,6 @@
 const Order = require('../models/Order');
 const Product = require('../models/Product');
+const { Parser } = require('json2csv');
 
 // @desc    Get sales summary (dashboard KPIs)
 // @route   GET /api/reports/summary
@@ -124,6 +125,46 @@ exports.getPaymentMethods = async (req, res, next) => {
     ]);
 
     res.json({ success: true, data: breakdown });
+  } catch (error) {
+    next(error);
+  }
+};
+// @desc    Export sales to CSV
+// @route   GET /api/reports/export/sales
+// @access  Admin / Manager
+exports.exportSalesCSV = async (req, res, next) => {
+  try {
+    const { startDate, endDate } = req.query;
+    const query = { status: 'completed' };
+    
+    if (startDate || endDate) {
+      query.createdAt = {};
+      if (startDate) query.createdAt.$gte = new Date(startDate);
+      if (endDate) query.createdAt.$lte = new Date(endDate);
+    }
+
+    const orders = await Order.find(query)
+      .populate('cashier', 'name')
+      .sort('-createdAt');
+
+    const fields = [
+      { label: 'Order #', value: 'orderNumber' },
+      { label: 'Date', value: (row) => new Date(row.createdAt).toLocaleString() },
+      { label: 'Customer', value: 'customer.name' },
+      { label: 'Cashier', value: 'cashier.name' },
+      { label: 'Subtotal', value: 'subtotal' },
+      { label: 'Tax', value: 'taxAmount' },
+      { label: 'Discount', value: 'discountAmount' },
+      { label: 'Total', value: 'total' },
+      { label: 'Payment', value: 'paymentMethod' }
+    ];
+
+    const json2csvParser = new Parser({ fields });
+    const csv = json2csvParser.parse(orders);
+
+    res.header('Content-Type', 'text/csv');
+    res.attachment(`sales-report-${new Date().toISOString().split('T')[0]}.csv`);
+    return res.send(csv);
   } catch (error) {
     next(error);
   }

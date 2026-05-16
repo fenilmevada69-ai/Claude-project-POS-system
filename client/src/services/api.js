@@ -10,7 +10,10 @@ const api = axios.create({
 // ─── Request Interceptor: attach access token ─────────────────────────────────
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('accessToken');
+    const token = localStorage.getItem('accessToken') || 
+                  localStorage.getItem('token') || 
+                  sessionStorage.getItem('accessToken') || 
+                  sessionStorage.getItem('token');
     if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
@@ -128,6 +131,23 @@ export const customersAPI = {
   create: (data) => api.post('/customers', data),
   update: (id, data) => api.put(`/customers/${id}`, data),
   delete: (id) => api.delete(`/customers/${id}`),
+};
+
+// ─── Shifts ───────────────────────────────────────────────────────────────────
+export const shiftsAPI = {
+  getCurrent: () => api.get('/shifts/current'),
+  start: (data) => api.post('/shifts/start', data),
+  end: (data) => api.post('/shifts/end', data),
+  getAll: (params) => api.get('/shifts', { params }),
+};
+
+// ─── Expenses ─────────────────────────────────────────────────────────────────
+export const expensesAPI = {
+  getAll: (params) => api.get('/expenses', { params }),
+  getSummary: (params) => api.get('/expenses/summary', { params }),
+  create: (data) => api.post('/expenses', data),
+  update: (id, data) => api.put(`/expenses/${id}`, data),
+  delete: (id) => api.delete(`/expenses/${id}`),
 };
 
 export default api;

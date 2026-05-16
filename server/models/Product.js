@@ -50,7 +50,8 @@ const productSchema = new mongoose.Schema(
     },
     barcode: {
       type: String,
-      default: '',
+      unique: true,
+      sparse: true,
     },
     taxRate: {
       type: Number,

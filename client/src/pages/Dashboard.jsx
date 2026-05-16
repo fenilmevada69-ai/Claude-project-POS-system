@@ -1,6 +1,7 @@
 import { useReports } from '../hooks/useReports';
 import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../components/LoadingSpinner';
+import CustomTooltip from '../components/CustomTooltip';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, Label,
@@ -48,11 +49,20 @@ export default function Dashboard() {
           { label: 'Avg Order Value', value: formatCurrency(summary?.avgOrderValue || 0), sub: 'Per transaction', icon: '📊', color: KPI_COLORS[2] },
           { label: 'Low Stock Items', value: summary?.lowStockCount || 0, sub: `of ${summary?.totalProducts} total products`, icon: '⚠️', color: KPI_COLORS[3] },
         ].map((kpi) => (
-          <div key={kpi.label} className="kpi-card" style={{ '--accent': kpi.color }}>
+          <div 
+            key={kpi.label} 
+            className="kpi-card" 
+            style={{ 
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderLeft: '3px solid #7c3aed',
+              backdropFilter: 'blur(10px)'
+            }}
+          >
             <div className="kpi-icon">{kpi.icon}</div>
             <div className="kpi-body">
               <p className="kpi-label">{kpi.label}</p>
-              <p className="kpi-value">{kpi.value}</p>
+              <p className="kpi-value" style={{ color: '#fff' }}>{kpi.value}</p>
               <p className="kpi-sub">{kpi.sub}</p>
             </div>
           </div>
@@ -62,26 +72,36 @@ export default function Dashboard() {
       {/* Charts Row */}
       <div className="charts-row">
         {/* Revenue Chart */}
-        <div className="chart-card chart-wide">
-          <h3 className="chart-title">Revenue Over Time</h3>
+        <div 
+          className="chart-card chart-wide"
+          style={{
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            backdropFilter: 'blur(10px)'
+          }}
+        >
+          <h3 className="chart-title text-white">Revenue Over Time</h3>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={revenue}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-              <XAxis dataKey="_id" tick={{ fontSize: 11, fill: '#94a3b8' }} />
-              <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
-              <Tooltip
-                contentStyle={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: 8 }}
-                labelStyle={{ color: '#e2e8f0' }}
-                formatter={(v) => [formatCurrency(v), 'Revenue']}
-              />
-              <Bar dataKey="revenue" fill="#6366f1" radius={[4, 4, 0, 0]} maxBarSize={80} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+              <XAxis dataKey="_id" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
+              <Tooltip content={<CustomTooltip />} />
+              <Bar dataKey="revenue" fill="#7c3aed" radius={[4, 4, 0, 0]} maxBarSize={80} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
         {/* Payment Methods Donut */}
-        <div className="chart-card chart-narrow">
-          <h3 className="chart-title">Payment Methods</h3>
+        <div 
+          className="chart-card chart-narrow"
+          style={{
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            backdropFilter: 'blur(10px)'
+          }}
+        >
+          <h3 className="chart-title text-white">Payment Methods</h3>
           <ResponsiveContainer width="100%" height={260}>
             <PieChart>
               <Pie 
@@ -93,8 +113,8 @@ export default function Dashboard() {
                 innerRadius={60}
                 outerRadius={90} 
                 paddingAngle={paymentMethods.length === 1 ? 0 : 5}
-                stroke="#0f172a"
-                strokeWidth={2}
+                stroke="rgba(255,255,255,0.1)"
+                strokeWidth={1}
               >
                 {paymentMethods.map((_, i) => (
                   <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
@@ -103,13 +123,13 @@ export default function Dashboard() {
                   <Label 
                     value={`${(Math.max(...paymentMethods.map(m => m.revenue)) / (paymentMethods.reduce((a, b) => a + b.revenue, 0) || 1) * 100).toFixed(0)}%`}
                     position="center" 
-                    fill="#e2e8f0" 
+                    fill="#fff" 
                     style={{ fontSize: '20px', fontWeight: 'bold' }} 
                   />
                 )}
               </Pie>
-              <Tooltip formatter={(v) => formatCurrency(v)} contentStyle={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: 8 }} />
-              <Legend verticalAlign="bottom" height={36} iconType="circle" />
+              <Tooltip content={<CustomTooltip />} />
+              <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{ paddingTop: '10px' }} />
             </PieChart>
           </ResponsiveContainer>
         </div>
@@ -117,8 +137,15 @@ export default function Dashboard() {
 
       {/* Top Products & Low Stock Row */}
       <div className="charts-row mt-6">
-        <div className="chart-card">
-          <h3 className="chart-title">Top Products</h3>
+        <div 
+          className="chart-card"
+          style={{
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            backdropFilter: 'blur(10px)'
+          }}
+        >
+          <h3 className="chart-title text-white">Top Products</h3>
           <div className="top-products-list">
             {topProducts.map((p, i) => (
               <div key={p._id} className="top-product-row">
@@ -138,8 +165,15 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="chart-card">
-          <h3 className="chart-title" style={{ color: 'var(--danger)' }}>Low Stock Alerts</h3>
+        <div 
+          className="chart-card"
+          style={{
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            backdropFilter: 'blur(10px)'
+          }}
+        >
+          <h3 className="chart-title" style={{ color: '#f43f5e' }}>Low Stock Alerts</h3>
           <div className="low-stock-list">
             {summary?.lowStockItems?.map(item => (
               <div key={item._id} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 0', borderBottom: '1px solid var(--border)' }}>

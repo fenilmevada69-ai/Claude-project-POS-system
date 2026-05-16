@@ -284,17 +284,17 @@ export default function CartPanel({ setProducts, fetchProducts }) {
         {/* Customer Selection */}
         <div className="customer-selection" style={{ padding: '0 0.75rem 0.75rem', borderBottom: '1px solid var(--border)' }}>
           {selectedCustomer ? (
-            <div className="selected-customer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--surface-2)', padding: '8px 12px', borderRadius: 'var(--radius)' }}>
+            <div className="selected-customer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,0.05)', padding: '8px 12px', borderRadius: 'var(--radius)', border: '1px solid rgba(255,255,255,0.1)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'var(--brand)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem' }}>
+                <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#7c3aed', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem' }}>
                   {selectedCustomer.name[0].toUpperCase()}
                 </div>
                 <div>
-                  <p style={{ fontSize: '0.85rem', fontWeight: '600' }}>{selectedCustomer.name}</p>
-                  <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{selectedCustomer.phone} • {selectedCustomer.loyaltyPoints} pts</p>
+                  <p style={{ fontSize: '0.85rem', fontWeight: '600', color: '#fff' }}>{selectedCustomer.name}</p>
+                  <p style={{ fontSize: '0.7rem', color: '#94a3b8' }}>{selectedCustomer.phone} • {selectedCustomer.loyaltyPoints} pts</p>
                 </div>
               </div>
-              <button className="btn-icon sm" onClick={() => setSelectedCustomer(null)}><X size={14} /></button>
+              <button className="btn-icon sm" style={{ color: '#94a3b8' }} onClick={() => setSelectedCustomer(null)}><X size={14} /></button>
             </div>
           ) : (
             <div style={{ position: 'relative' }}>
@@ -310,19 +310,19 @@ export default function CartPanel({ setProducts, fetchProducts }) {
                 />
               </div>
               {customerResults.length > 0 && (
-                <div className="customer-results shadow-lg" style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'var(--surface-1)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', zIndex: 10, marginTop: '5px', maxHeight: '200px', overflowY: 'auto' }}>
+                <div className="customer-results shadow-2xl" style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: '#1e2130', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 'var(--radius)', zIndex: 10, marginTop: '5px', maxHeight: '200px', overflowY: 'auto', backdropFilter: 'blur(10px)' }}>
                   {customerResults.map(c => (
                     <div 
                       key={c._id} 
-                      className="customer-result-item" 
+                      className="customer-result-item hover:bg-white/5 transition-colors" 
                       onClick={() => selectCustomer(c)}
-                      style={{ padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                      style={{ padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                     >
                       <div>
-                        <p style={{ fontSize: '0.85rem', fontWeight: '500' }}>{c.name}</p>
-                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{c.phone}</p>
+                        <p style={{ fontSize: '0.85rem', fontWeight: '500', color: '#fff' }}>{c.name}</p>
+                        <p style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{c.phone}</p>
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--brand)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: '#a78bfa' }}>
                         <Star size={12} fill="currentColor" /> {c.loyaltyPoints}
                       </div>
                     </div>

@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { ToastProvider } from './context/ToastContext';
+import { ShiftProvider } from './context/ShiftContext';
 import { useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import TopBar from './components/TopBar';
@@ -13,6 +14,8 @@ import Orders from './pages/Orders';
 import Reports from './pages/Reports';
 import Staff from './pages/Staff';
 import Customers from './pages/Customers';
+import Expenses from './pages/Expenses';
+import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
 
 function RouteChangeListener() {
@@ -27,6 +30,8 @@ function RouteChangeListener() {
       '/staff': 'Staff | Lumina POS',
       '/customers': 'Customers | Lumina POS',
       '/reports': 'Reports | Lumina POS',
+      '/expenses': 'Expenses | Lumina POS',
+      '/settings': 'Settings | Lumina POS',
       '/login': 'Login | Lumina POS',
     };
     document.title = routeTitles[location.pathname] || 'Lumina POS';
@@ -61,6 +66,8 @@ function ProtectedLayout() {
             <Route path="/customers" element={<Customers />} />
             <Route path="/staff"     element={<RoleRoute roles={['admin', 'manager']}><Staff /></RoleRoute>} />
             <Route path="/reports"   element={<Reports />} />
+            <Route path="/expenses"  element={<RoleRoute roles={['admin', 'manager']}><Expenses /></RoleRoute>} />
+            <Route path="/settings"  element={<Settings />} />
             <Route path="*"          element={<NotFound />} />
           </Routes>
         </main>
@@ -74,13 +81,15 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <ToastProvider>
-          <CartProvider>
-            <RouteChangeListener />
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/*"     element={<ProtectedLayout />} />
-            </Routes>
-          </CartProvider>
+          <ShiftProvider>
+            <CartProvider>
+              <RouteChangeListener />
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/*"     element={<ProtectedLayout />} />
+              </Routes>
+            </CartProvider>
+          </ShiftProvider>
         </ToastProvider>
       </AuthProvider>
     </BrowserRouter>

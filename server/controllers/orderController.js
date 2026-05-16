@@ -1,6 +1,7 @@
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 const Customer = require('../models/Customer');
+const { checkAndSendLowStockAlerts } = require('../services/stockAlertService');
 
 // @desc    Create order
 // @route   POST /api/orders
@@ -76,6 +77,10 @@ exports.createOrder = async (req, res, next) => {
     }
 
     const populated = await order.populate('cashier', 'name email');
+    
+    // Trigger low stock check in background
+    checkAndSendLowStockAlerts();
+    
     res.status(201).json({ success: true, order: populated });
   } catch (error) {
     next(error);
