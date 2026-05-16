@@ -611,22 +611,31 @@ textarea:focus {
 .data-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
   font-size: .83rem;
 }
 
 .data-table th {
   background: var(--surface-2);
-  padding: .65rem 1rem;
-  text-align: left;
+  padding: 14px 12px;
+  text-align: center;
+  vertical-align: middle;
   font-weight: 600;
   color: var(--text-muted);
   white-space: nowrap;
 }
 
 .data-table td {
-  padding: .7rem 1rem;
-  border-top: 1px solid var(--border);
+  padding: 14px 12px;
+  height: 56px;
+  text-align: center;
   vertical-align: middle;
+  border-top: 1px solid var(--border);
+}
+
+.data-table th:first-child,
+.data-table td:first-child {
+  text-align: left;
 }
 
 .data-table tr:hover td {
@@ -639,8 +648,20 @@ textarea:focus {
 
 .actions-cell {
   display: flex;
-  gap: .25rem;
+  flex-direction: row;
+  justify-content: center;
   align-items: center;
+  gap: 8px;
+}
+
+.actions-cell .btn-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
 }
 
 .empty-state {
@@ -1259,6 +1280,12 @@ textarea:focus {
 }
 
 @media print {
+  body {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
   body * {
     visibility: hidden;
   }
@@ -1273,66 +1300,148 @@ textarea:focus {
 
   .print-only {
     position: absolute;
-    left: 0;
+    left: 50%;
     top: 0;
+    transform: translateX(-50%);
     width: 300px; /* 80mm thermal receipt width */
-    margin: 0;
-    padding: 0;
+    margin: 0 auto;
+    padding: 10px;
     background: white;
     color: black;
-    font-family: monospace;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11px;
+    line-height: 1.6;
     display: block;
+    box-shadow: none;
+    border: none;
   }
   
-  .receipt-header, .receipt-footer {
+  /* Watermark */
+  .duplicate-watermark {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    font-size: 40px;
+    color: rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+    z-index: 0;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  
+  /* Header */
+  .receipt-header {
     text-align: center;
-    margin-bottom: 10px;
+  }
+  .receipt-header h1 {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+  }
+  .receipt-header .tagline {
+    font-size: 11px;
+    color: #333;
+    margin: 0;
+    padding: 0;
   }
   
-  .receipt-header h2 {
-    margin: 0 0 5px 0;
-    font-size: 1.5rem;
+  /* Separator */
+  .dashed-separator {
+    text-align: center;
+    margin: 5px 0;
+    font-size: 11px;
+    overflow: hidden;
+    white-space: nowrap;
   }
   
-  .receipt-header p, .receipt-footer p, .receipt-meta p {
-    margin: 2px 0;
-    font-size: 0.9rem;
+  /* Store Info */
+  .store-info {
+    text-align: center;
+  }
+  .store-info p {
+    margin: 0;
+    padding: 0;
   }
   
-  .receipt-meta {
-    border-bottom: 1px dashed black;
-    padding-bottom: 5px;
-    margin-bottom: 5px;
+  /* Order Info */
+  .order-info {
+    display: flex;
+    flex-direction: column;
   }
-  
-  .receipt-items {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9rem;
-    margin-bottom: 5px;
-    border-bottom: 1px dashed black;
-  }
-  
-  .receipt-items th, .receipt-items td {
-    padding: 4px 2px;
-  }
-  
-  .receipt-summary {
-    font-size: 0.9rem;
-    padding: 5px 0;
-    border-bottom: 1px dashed black;
-  }
-  
-  .summary-row {
+  .info-row {
     display: flex;
     justify-content: space-between;
-    margin: 2px 0;
   }
   
+  /* Items Table */
+  .receipt-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+  }
+  .receipt-items-table th, .receipt-items-table td {
+    padding: 2px 0;
+  }
+  .align-left { text-align: left; }
+  .align-center { text-align: center; }
+  .align-right { text-align: right; }
+  
+  /* Totals */
+  .receipt-totals {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .solid-separator {
+    text-align: right;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    margin: 2px 0;
+  }
   .grand-total {
     font-weight: bold;
-    font-size: 1.1rem;
-    margin-top: 5px;
+    font-size: 14px;
+    margin-top: 2px;
+  }
+  
+  /* Payment */
+  .payment-confirmed {
+    text-align: center;
+    margin: 5px 0;
+  }
+  .payment-confirmed p {
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Footer */
+  .receipt-footer {
+    text-align: center;
+  }
+  .receipt-footer p {
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Barcode */
+  .barcode-area {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+  .barcode-area p {
+    margin: 0;
+    padding: 0;
   }
 }
 

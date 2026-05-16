@@ -3,6 +3,8 @@ import { useOrders } from '../hooks/useOrders';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { Download } from 'lucide-react';
+import { generateGSTBill } from '../utils/generateGSTBill';
 
 const fmt = (v) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(v);
 
@@ -25,8 +27,8 @@ export default function Orders() {
       showToast('Order refunded successfully');
       setRefundModal(null);
       setRefundReason('');
-    } catch (e) { 
-      showToast(e.response?.data?.message || 'Refund failed', 'error'); 
+    } catch (e) {
+      showToast(e.response?.data?.message || 'Refund failed', 'error');
     }
     finally { setProcessing(false); }
   };
@@ -60,7 +62,16 @@ export default function Orders() {
       <div className="table-wrap">
         <table className="data-table">
           <thead>
-            <tr><th>Order #</th><th>Customer</th><th>Items</th><th>Payment</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr>
+            <tr>
+              <th style={{ width: '160px' }}>Order #</th>
+              <th style={{ width: '150px' }}>Customer</th>
+              <th style={{ width: '80px' }}>Items</th>
+              <th style={{ width: '100px' }}>Payment</th>
+              <th style={{ width: '100px' }}>Total</th>
+              <th style={{ width: '110px' }}>Status</th>
+              <th style={{ width: '160px' }}>Date</th>
+              <th style={{ width: '110px' }}>Actions</th>
+            </tr>
           </thead>
           <tbody>
             {orders.map((o) => (
@@ -71,12 +82,24 @@ export default function Orders() {
                 <td>{PAYMENT_ICONS[o.paymentMethod]} {o.paymentMethod}</td>
                 <td><strong>{fmt(o.total)}</strong></td>
                 <td><span className={`status-pill ${STATUS_COLORS[o.status]}`}>{o.status.charAt(0).toUpperCase() + o.status.slice(1)}</span></td>
-                <td>{new Date(o.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
+                <td style={{ whiteSpace: 'nowrap' }}>{new Date(o.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
                 <td className="actions-cell">
                   <button className="btn-icon" title="View" onClick={() => setDetail(o)}>👁️</button>
-                  {o.status === 'completed' && (user?.role === 'manager' || user?.role === 'admin') && (
-                    <button className="btn-icon btn-danger" title="Refund / Void" onClick={() => setRefundModal(o)}>↩️</button>
-                  )}
+                  <button 
+                    className="btn-icon btn-danger" 
+                    title="Refund / Void" 
+                    onClick={() => {
+                      if (o.status === 'completed' && (user?.role === 'manager' || user?.role === 'admin')) {
+                        setRefundModal(o);
+                      }
+                    }}
+                    style={!(o.status === 'completed' && (user?.role === 'manager' || user?.role === 'admin')) ? { opacity: 0.3, cursor: 'not-allowed', pointerEvents: 'none' } : {}}
+                  >
+                    ↩️
+                  </button>
+                  <button className="btn-icon" style={{ color: '#10b981' }} title="Download GST Invoice" onClick={() => generateGSTBill(o, showToast)}>
+                    <Download size={18} />
+                  </button>
                 </td>
               </tr>
             ))}

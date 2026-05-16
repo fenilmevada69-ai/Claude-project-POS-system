@@ -98,3 +98,41 @@ exports.logout = async (req, res, next) => {
 exports.getMe = async (req, res) => {
   res.json({ success: true, user: req.user });
 };
+
+// @desc    Update profile
+// @route   PUT /api/auth/profile
+// @access  Protected
+exports.updateProfile = async (req, res, next) => {
+  try {
+    const { name } = req.body;
+    if (!name) return res.status(400).json({ success: false, message: 'Name is required' });
+    const user = await User.findByIdAndUpdate(req.user._id, { name }, { new: true, runValidators: true });
+    res.json({ success: true, user });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Change password
+// @route   PUT /api/auth/change-password
+// @access  Protected
+exports.changePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ success: false, message: 'Please provide current and new password' });
+    }
+    
+    const user = await User.findById(req.user._id).select('+password');
+    if (!(await user.comparePassword(currentPassword))) {
+      return res.status(400).json({ success: false, message: 'Current password is incorrect' });
+    }
+    
+    user.password = newPassword;
+    await user.save(); // This will trigger the pre-save hook to hash the new password
+    
+    res.json({ success: true, message: 'Password updated successfully' });
+  } catch (error) {
+    next(error);
+  }
+};

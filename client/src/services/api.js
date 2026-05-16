@@ -77,6 +77,8 @@ export const authAPI = {
   logout: () => api.post('/auth/logout'),
   refresh: (data) => api.post('/auth/refresh', data),
   me: () => api.get('/auth/me'),
+  updateProfile: (data) => api.put('/auth/profile', data),
+  changePassword: (data) => api.put('/auth/change-password', data),
 };
 
 // ─── Products ─────────────────────────────────────────────────────────────────

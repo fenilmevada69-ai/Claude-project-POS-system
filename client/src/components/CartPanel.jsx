@@ -128,47 +128,100 @@ export default function CartPanel({ setProducts, fetchProducts }) {
         </div>
 
         {/* Printable Thermal Receipt (Hidden on screen) */}
-        <div className="thermal-receipt print-only">
+        <div className={`thermal-receipt print-only ${success.isReprint ? 'is-duplicate' : ''}`}>
+          {success.isReprint && <div className="duplicate-watermark">DUPLICATE</div>}
+          
           <div className="receipt-header">
-            <h2>Lumina POS</h2>
-            <p>123 Business Street</p>
-            <p>Phone: (555) 123-4567</p>
+            <h1>LUMINA POS</h1>
+            <p className="tagline">Smart Retail Solutions</p>
           </div>
-          <div className="receipt-meta">
-            <p>Order: {success.orderNumber}</p>
-            <p>Date: {new Date(success.createdAt || Date.now()).toLocaleString()}</p>
-            <p>Cashier: {success.cashier?.name || 'Staff'}</p>
+          
+          <div className="dashed-separator">- - - - - - - - - - - - - - -</div>
+          
+          <div className="store-info">
+            <p>Lumina Store</p>
+            <p>123 Business Street, City - 380001</p>
+            <p>Phone: +91 98765 43210</p>
+            <p>GSTIN: 24XXXXX1234X1ZX</p>
           </div>
-          <table className="receipt-items">
+          
+          <div className="dashed-separator">- - - - - - - - - - - - - - -</div>
+          
+          <div className="order-info">
+            <div className="info-row"><span>Order #:</span><span>{success.orderNumber}</span></div>
+            <div className="info-row"><span>Date:</span><span>{new Date(success.createdAt || Date.now()).toLocaleDateString('en-GB')}</span></div>
+            <div className="info-row"><span>Time:</span><span>{new Date(success.createdAt || Date.now()).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span></div>
+            <div className="info-row"><span>Cashier:</span><span>{success.cashier?.name || 'Staff'}</span></div>
+            <div className="info-row"><span>Payment:</span><span>{success.paymentMethod?.toUpperCase()}</span></div>
+          </div>
+          
+          <div className="dashed-separator">- - - - - - - - - - - - - - -</div>
+          
+          <table className="receipt-items-table">
             <thead>
               <tr>
-                <th style={{ textAlign: 'left' }}>Item</th>
-                <th style={{ textAlign: 'center' }}>Qty</th>
-                <th style={{ textAlign: 'right' }}>Total</th>
+                <th className="align-left">Item</th>
+                <th className="align-center">Qty</th>
+                <th className="align-right">Rate</th>
+                <th className="align-right">Amount</th>
               </tr>
             </thead>
             <tbody>
-              {success.items?.map((item, idx) => (
-                <tr key={idx}>
-                  <td style={{ textAlign: 'left' }}>{item.name}<br/><small>{fmt(item.unitPrice)}</small></td>
-                  <td style={{ textAlign: 'center', verticalAlign: 'top' }}>{item.quantity}</td>
-                  <td style={{ textAlign: 'right', verticalAlign: 'top' }}>{fmt(item.subtotal)}</td>
-                </tr>
-              ))}
+              {success.items?.map((item, idx) => {
+                const truncatedName = item.name.length > 16 ? item.name.substring(0, 16) + '...' : item.name;
+                return (
+                  <tr key={idx}>
+                    <td className="align-left">{truncatedName}</td>
+                    <td className="align-center">{item.quantity}</td>
+                    <td className="align-right">{fmt(item.unitPrice)}</td>
+                    <td className="align-right">{fmt(item.subtotal)}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
-          <div className="receipt-summary">
-            <div className="summary-row"><span>Subtotal:</span><span>{fmt(success.subtotal)}</span></div>
-            {success.discountAmount > 0 && <div className="summary-row"><span>Discount:</span><span>-{fmt(success.discountAmount)}</span></div>}
-            <div className="summary-row"><span>Tax:</span><span>{fmt(success.taxAmount)}</span></div>
-            <div className="summary-row grand-total"><span>Total:</span><span>{fmt(success.total)}</span></div>
+          
+          <div className="dashed-separator">- - - - - - - - - - - - - - -</div>
+          
+          <div className="receipt-totals">
+            <div className="total-row">
+              <span>Subtotal:</span>
+              <span>{fmt(success.subtotal)}</span>
+            </div>
+            {success.discountAmount > 0 && (
+              <div className="total-row">
+                <span>Discount:</span>
+                <span>-{fmt(success.discountAmount)}</span>
+              </div>
+            )}
+            <div className="total-row">
+              <span>Tax (18%):</span>
+              <span>{fmt(success.taxAmount)}</span>
+            </div>
+            <div className="solid-separator">━━━━━━━━━━━━━━━━━━━━━━</div>
+            <div className="total-row grand-total">
+              <span>TOTAL:</span>
+              <span>{fmt(success.total)}</span>
+            </div>
           </div>
-          <div className="receipt-meta" style={{ marginTop: '1rem' }}>
-            <p>Payment Method: {success.paymentMethod.toUpperCase()}</p>
+          
+          <div className="payment-confirmed">
+            <p>✓ PAID via {success.paymentMethod?.toUpperCase()}</p>
+            {success.paymentMethod === 'cash' && success.cashReceived && (
+              <p>Cash: {fmt(success.cashReceived)} &nbsp; Change: {fmt(success.cashReceived - success.total)}</p>
+            )}
           </div>
+          
+          <div className="dashed-separator">- - - - - - - - - - - - - - -</div>
+          
           <div className="receipt-footer">
-            <p>Thank you for your purchase!</p>
-            <p>Please come again</p>
+            <p>Thank you for shopping with us!</p>
+            <p>Please visit again 😊</p>
+            <p>Powered by Lumina POS</p>
+          </div>
+          
+          <div className="barcode-area">
+            <p>*{success.orderNumber}*</p>
           </div>
         </div>
       </div>

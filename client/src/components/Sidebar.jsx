@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import AccountSettingsModal from './AccountSettingsModal';
 
 const NAV_ITEMS = [
   { to: '/dashboard', icon: '🏠', label: 'Dashboard' },
@@ -11,6 +13,7 @@ const NAV_ITEMS = [
 
 export default function Sidebar() {
   const { user, logout } = useAuth();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <aside className="sidebar">
@@ -36,7 +39,7 @@ export default function Sidebar() {
 
       {/* User footer */}
       <div className="sidebar-footer">
-        <div className="user-info">
+        <div className="user-info" onClick={() => setIsModalOpen(true)} style={{ cursor: 'pointer', flex: 1 }}>
           <div className="user-avatar">{user?.name?.charAt(0).toUpperCase()}</div>
           <div className="user-meta">
             <p className="user-name">{user?.name}</p>
@@ -45,6 +48,8 @@ export default function Sidebar() {
         </div>
         <button className="logout-btn" onClick={logout} title="Logout">⏻</button>
       </div>
+
+      <AccountSettingsModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </aside>
   );
 }
