@@ -112,4 +112,22 @@ export const categoriesAPI = {
   getAll: () => api.get('/categories'),
 };
 
+// ─── Users ────────────────────────────────────────────────────────────────────
+export const usersAPI = {
+  getAll: (params) => api.get('/users', { params }),
+  create: (data) => api.post('/users', data),
+  update: (id, data) => api.put(`/users/${id}`, data),
+  delete: (id) => api.delete(`/users/${id}`),
+  resetPassword: (id, password) => api.patch(`/users/${id}/reset-password`, { password }),
+};
+
+// ─── Customers ────────────────────────────────────────────────────────────────
+export const customersAPI = {
+  getAll: (params) => api.get('/customers', { params }),
+  getOne: (id) => api.get(`/customers/${id}`),
+  create: (data) => api.post('/customers', data),
+  update: (id, data) => api.put(`/customers/${id}`, data),
+  delete: (id) => api.delete(`/customers/${id}`),
+};
+
 export default api;

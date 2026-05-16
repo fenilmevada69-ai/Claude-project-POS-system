@@ -1,12 +1,13 @@
 const Order = require('../models/Order');
 const Product = require('../models/Product');
+const Customer = require('../models/Customer');
 
 // @desc    Create order
 // @route   POST /api/orders
 // @access  Protected
 exports.createOrder = async (req, res, next) => {
   try {
-    const { items, paymentMethod, customer, note, discountAmount } = req.body;
+    const { items, paymentMethod, customer: customerData, note, discountAmount } = req.body;
 
     // Validate stock and calculate totals
     let subtotal = 0;
@@ -54,9 +55,25 @@ exports.createOrder = async (req, res, next) => {
       paymentStatus: 'completed',
       status: 'completed',
       cashier: req.user._id,
-      customer: customer || {},
+      customer: customerData || {},
       note,
     });
+
+    // Update Customer loyalty points and stats
+    if (customerData && customerData.phone) {
+      const pointsEarned = Math.floor(total / 100);
+      await Customer.findOneAndUpdate(
+        { phone: customerData.phone },
+        { 
+          $inc: { 
+            loyaltyPoints: pointsEarned,
+            totalSpent: total,
+            ordersCount: 1
+          },
+          $set: { lastVisit: new Date() }
+        }
+      );
+    }
 
     const populated = await order.populate('cashier', 'name email');
     res.status(201).json({ success: true, order: populated });

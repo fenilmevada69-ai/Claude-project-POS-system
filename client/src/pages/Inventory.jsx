@@ -3,6 +3,8 @@ import { useProducts } from '../hooks/useProducts';
 import { categoriesAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { Camera, Upload, X } from 'lucide-react';
+import api from '../services/api';
 
 const formatCurrency = (v) =>
   new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(v);
@@ -10,6 +12,7 @@ const formatCurrency = (v) =>
 const EMPTY_FORM = {
   name: '', sku: '', price: '', costPrice: '', stock: '',
   lowStockThreshold: 10, taxRate: 0, category: '', description: '',
+  image: '',
 };
 
 export default function Inventory() {
@@ -42,12 +45,35 @@ export default function Inventory() {
     setForm({
       name: p.name || '', sku: p.sku || '', price: p.price || '', costPrice: p.costPrice || '',
       stock: p.stock || 0, lowStockThreshold: p.lowStockThreshold || 10, taxRate: p.taxRate || 0,
-      category: p.category?._id || '', description: p.description || '',
+      category: p.category?._id || '', description: p.description || '', image: p.image || '',
     });
     setModal('edit');
   };
   const openStock  = (p) => { setSelected(p); setStockAdj({ adjustment: 0, reason: '' }); setModal('stock'); };
-  const closeModal = () => { setModal(null); setSelected(null); };
+  const closeModal = () => { setModal(null); setSelected(null); setUploading(false); };
+
+  const [uploading, setUploading] = useState(false);
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    setUploading(true);
+    try {
+      const { data } = await api.post('/products/upload-image', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      setForm({ ...form, image: data.imageUrl });
+      showToast('Image uploaded successfully');
+    } catch (e) {
+      showToast('Image upload failed', 'error');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -117,12 +143,22 @@ export default function Inventory() {
         <table className="data-table">
           <thead>
             <tr>
+              <th style={{ width: '50px' }}></th>
               <th>Name</th><th>SKU</th><th>Price</th><th>Stock</th><th>Category</th><th>Status</th><th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((p) => (
               <tr key={p._id} className={p.isLowStock ? 'row-warning' : ''}>
+                <td>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--surface-2)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {p.image ? (
+                      <img src={`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}${p.image}`} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      <span style={{ fontWeight: 'bold', fontSize: '0.8rem', color: 'var(--brand)' }}>{p.name[0].toUpperCase()}</span>
+                    )}
+                  </div>
+                </td>
                 <td><strong>{p.name}</strong></td>
                 <td><code className="sku-badge">{p.sku}</code></td>
                 <td>{formatCurrency(p.price)}</td>
@@ -154,6 +190,60 @@ export default function Inventory() {
               <button className="modal-close" onClick={closeModal}>✕</button>
             </div>
             <div className="modal-body grid-2">
+              <div className="form-group span-2">
+                <label>Product Image</label>
+                <div 
+                  className="image-upload-box"
+                  onClick={() => document.getElementById('image-input').click()}
+                  style={{
+                    border: '2px dashed var(--border)',
+                    borderRadius: 'var(--radius)',
+                    height: '140px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    background: form.image ? 'none' : 'var(--surface-2)',
+                    transition: 'border-color 0.2s'
+                  }}
+                >
+                  {uploading ? (
+                    <div className="spinner sm" />
+                  ) : form.image ? (
+                    <>
+                      <img 
+                        src={`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}${form.image}`} 
+                        alt="Preview" 
+                        style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
+                      />
+                      <button 
+                        className="btn-icon" 
+                        style={{ position: 'absolute', top: '5px', right: '5px', background: 'rgba(0,0,0,0.5)', color: 'white' }}
+                        onClick={(e) => { e.stopPropagation(); setForm({ ...form, image: '' }); }}
+                      >
+                        <X size={14} />
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Camera size={32} className="text-muted" />
+                      <p style={{ fontSize: '0.8rem', marginTop: '8px' }} className="text-muted">Click to upload or drag & drop</p>
+                      <p style={{ fontSize: '0.7rem' }} className="text-muted">JPG, PNG, WebP up to 2MB</p>
+                    </>
+                  )}
+                  <input 
+                    id="image-input" 
+                    type="file" 
+                    hidden 
+                    accept="image/*" 
+                    onChange={handleImageUpload} 
+                  />
+                </div>
+              </div>
+
               {[
                 ['name',              'Product Name',      'text'],
                 ['sku',               'SKU',               'text'],
@@ -194,7 +284,7 @@ export default function Inventory() {
             </div>
             <div className="modal-footer">
               <button className="btn btn-ghost" onClick={closeModal}>Cancel</button>
-              <button className="btn btn-primary" onClick={handleSave} disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
+              <button className="btn btn-primary" onClick={handleSave} disabled={saving || uploading}>{saving ? 'Saving…' : 'Save'}</button>
             </div>
           </div>
         </div>

@@ -11,6 +11,8 @@ import Payment from './pages/Payment';
 import Inventory from './pages/Inventory';
 import Orders from './pages/Orders';
 import Reports from './pages/Reports';
+import Staff from './pages/Staff';
+import Customers from './pages/Customers';
 import NotFound from './pages/NotFound';
 
 function RouteChangeListener() {
@@ -22,6 +24,8 @@ function RouteChangeListener() {
       '/payment': 'New Sale | Lumina POS',
       '/inventory': 'Inventory | Lumina POS',
       '/orders': 'Orders | Lumina POS',
+      '/staff': 'Staff | Lumina POS',
+      '/customers': 'Customers | Lumina POS',
       '/reports': 'Reports | Lumina POS',
       '/login': 'Login | Lumina POS',
     };
@@ -29,6 +33,14 @@ function RouteChangeListener() {
   }, [location]);
 
   return null;
+}
+
+function RoleRoute({ children, roles }) {
+  const { user } = useAuth();
+  if (!roles.includes(user?.role)) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  return children;
 }
 
 function ProtectedLayout() {
@@ -46,6 +58,8 @@ function ProtectedLayout() {
             <Route path="/payment"   element={<Payment />} />
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/orders"    element={<Orders />} />
+            <Route path="/customers" element={<Customers />} />
+            <Route path="/staff"     element={<RoleRoute roles={['admin', 'manager']}><Staff /></RoleRoute>} />
             <Route path="/reports"   element={<Reports />} />
             <Route path="*"          element={<NotFound />} />
           </Routes>

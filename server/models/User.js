@@ -34,6 +34,13 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    lastLogin: {
+      type: Date,
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
     refreshToken: {
       type: String,
       select: false,

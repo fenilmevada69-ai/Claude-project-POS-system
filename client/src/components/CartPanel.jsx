@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { useCheckout } from '../hooks/useOrders';
 import { useToast } from '../context/ToastContext';
+import { customersAPI } from '../services/api';
+import { Search, User, X, Star } from 'lucide-react';
 
 const fmt = (v) =>
   new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(v);
@@ -23,6 +25,35 @@ export default function CartPanel({ setProducts, fetchProducts }) {
   const { showToast } = useToast();
   const [success, setSuccess] = useState(null);
   const [error, setError]     = useState('');
+
+  // Customer selection states
+  const [customerSearch, setCustomerSearch] = useState('');
+  const [customerResults, setCustomerResults] = useState([]);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [searchingCustomer, setSearchingCustomer] = useState(false);
+
+  const searchCustomers = async (val) => {
+    setCustomerSearch(val);
+    if (val.length < 3) {
+      setCustomerResults([]);
+      return;
+    }
+    setSearchingCustomer(true);
+    try {
+      const { data } = await customersAPI.getAll({ search: val });
+      setCustomerResults(data.customers);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setSearchingCustomer(false);
+    }
+  };
+
+  const selectCustomer = (c) => {
+    setSelectedCustomer(c);
+    setCustomerSearch('');
+    setCustomerResults([]);
+  };
 
   // Sub-panel states
   const [showSubPanel, setShowSubPanel] = useState(false);
@@ -72,7 +103,8 @@ export default function CartPanel({ setProducts, fetchProducts }) {
       }
       
       const order = await checkout({
-        paymentMethod: finalPaymentMethod
+        paymentMethod: finalPaymentMethod,
+        customer: selectedCustomer ? { name: selectedCustomer.name, phone: selectedCustomer.phone } : undefined
       });
       
       // 1. Optimistic stock update
@@ -94,6 +126,7 @@ export default function CartPanel({ setProducts, fetchProducts }) {
       setShowSubPanel(false);
       setCashReceived('');
       setSelectedWallet('');
+      setSelectedCustomer(null);
 
       // 3. Fetch fresh data from backend
       if (fetchProducts) {
@@ -245,6 +278,58 @@ export default function CartPanel({ setProducts, fetchProducts }) {
           <h3>Cart <span className="cart-count">{items.length}</span></h3>
           {items.length > 0 && (
             <button className="btn-link" onClick={clearCart}>Clear all</button>
+          )}
+        </div>
+
+        {/* Customer Selection */}
+        <div className="customer-selection" style={{ padding: '0 0.75rem 0.75rem', borderBottom: '1px solid var(--border)' }}>
+          {selectedCustomer ? (
+            <div className="selected-customer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--surface-2)', padding: '8px 12px', borderRadius: 'var(--radius)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'var(--brand)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem' }}>
+                  {selectedCustomer.name[0].toUpperCase()}
+                </div>
+                <div>
+                  <p style={{ fontSize: '0.85rem', fontWeight: '600' }}>{selectedCustomer.name}</p>
+                  <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{selectedCustomer.phone} • {selectedCustomer.loyaltyPoints} pts</p>
+                </div>
+              </div>
+              <button className="btn-icon sm" onClick={() => setSelectedCustomer(null)}><X size={14} /></button>
+            </div>
+          ) : (
+            <div style={{ position: 'relative' }}>
+              <div style={{ position: 'relative' }}>
+                <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <input 
+                  type="text" 
+                  placeholder="Link customer (phone/name)..." 
+                  className="search-input sm"
+                  style={{ width: '100%', paddingLeft: '32px', fontSize: '0.85rem' }}
+                  value={customerSearch}
+                  onChange={(e) => searchCustomers(e.target.value)}
+                />
+              </div>
+              {customerResults.length > 0 && (
+                <div className="customer-results shadow-lg" style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'var(--surface-1)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', zIndex: 10, marginTop: '5px', maxHeight: '200px', overflowY: 'auto' }}>
+                  {customerResults.map(c => (
+                    <div 
+                      key={c._id} 
+                      className="customer-result-item" 
+                      onClick={() => selectCustomer(c)}
+                      style={{ padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                    >
+                      <div>
+                        <p style={{ fontSize: '0.85rem', fontWeight: '500' }}>{c.name}</p>
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{c.phone}</p>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--brand)' }}>
+                        <Star size={12} fill="currentColor" /> {c.loyaltyPoints}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           )}
         </div>
 

@@ -8,6 +8,8 @@ const NAV_ITEMS = [
   { to: '/payment',   icon: '💳', label: 'Point of Sale' },
   { to: '/inventory', icon: '📦', label: 'Inventory' },
   { to: '/orders',    icon: '🛒', label: 'Orders' },
+  { to: '/customers', icon: '👥', label: 'Customers' },
+  { to: '/staff',     icon: '🛡️', label: 'Staff', roles: ['admin', 'manager'] },
   { to: '/reports',   icon: '📊', label: 'Reports' },
 ];
 
@@ -25,7 +27,7 @@ export default function Sidebar() {
 
       {/* Nav */}
       <nav className="sidebar-nav">
-        {NAV_ITEMS.map(({ to, icon, label }) => (
+        {NAV_ITEMS.filter(item => !item.roles || item.roles.includes(user?.role)).map(({ to, icon, label }) => (
           <NavLink
             key={to}
             to={to}
