@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useProducts } from '../hooks/useProducts';
 import { categoriesAPI } from '../services/api';
+import { useToast } from '../context/ToastContext';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const formatCurrency = (v) =>
   new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(v);
@@ -14,11 +16,12 @@ export default function Inventory() {
   const { products, loading, error, createProduct, updateProduct, deleteProduct, adjustStock } = useProducts({ limit: 100 });
   const [categories, setCategories] = useState([]);
   const [search, setSearch]     = useState('');
-  const [modal, setModal]       = useState(null); // null | 'add' | 'edit' | 'stock'
+  const [modal, setModal]       = useState(null); // null | 'add' | 'edit' | 'stock' | 'delete'
   const [selected, setSelected] = useState(null);
   const [form, setForm]         = useState(EMPTY_FORM);
   const [stockAdj, setStockAdj] = useState({ adjustment: 0, reason: '' });
   const [saving, setSaving]     = useState(false);
+  const { showToast }           = useToast();
 
   // ── Fetch categories once on mount ─────────────────────────────────────────
   useEffect(() => {
@@ -37,9 +40,9 @@ export default function Inventory() {
   const openEdit = (p) => {
     setSelected(p);
     setForm({
-      name: p.name, sku: p.sku, price: p.price, costPrice: p.costPrice,
-      stock: p.stock, lowStockThreshold: p.lowStockThreshold, taxRate: p.taxRate,
-      category: p.category?._id || '', description: p.description,
+      name: p.name || '', sku: p.sku || '', price: p.price || '', costPrice: p.costPrice || '',
+      stock: p.stock || 0, lowStockThreshold: p.lowStockThreshold || 10, taxRate: p.taxRate || 0,
+      category: p.category?._id || '', description: p.description || '',
     });
     setModal('edit');
   };
@@ -49,10 +52,17 @@ export default function Inventory() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      if (modal === 'add') await createProduct(form);
-      else                  await updateProduct(selected._id, form);
+      if (modal === 'add') {
+        await createProduct(form);
+        showToast('Product added successfully');
+      } else {
+        await updateProduct(selected._id, form);
+        showToast('Product updated successfully');
+      }
       closeModal();
-    } catch (e) { alert(e.response?.data?.message || 'Save failed'); }
+    } catch (e) { 
+      showToast(e.response?.data?.message || 'Save failed', 'error'); 
+    }
     finally { setSaving(false); }
   };
 
@@ -60,14 +70,30 @@ export default function Inventory() {
     setSaving(true);
     try {
       await adjustStock(selected._id, Number(stockAdj.adjustment), stockAdj.reason);
+      showToast('Stock adjusted successfully');
       closeModal();
-    } catch (e) { alert(e.response?.data?.message || 'Adjustment failed'); }
+    } catch (e) { 
+      showToast(e.response?.data?.message || 'Adjustment failed', 'error'); 
+    }
     finally { setSaving(false); }
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('Deactivate this product?')) return;
-    await deleteProduct(id);
+  const confirmDelete = (p) => {
+    setSelected(p);
+    setModal('delete');
+  };
+
+  const handleDelete = async () => {
+    if (!selected) return;
+    setSaving(true);
+    try {
+      await deleteProduct(selected._id);
+      showToast('Product deactivated successfully');
+      closeModal();
+    } catch (e) { 
+      showToast(e.response?.data?.message || 'Delete failed', 'error'); 
+    }
+    finally { setSaving(false); }
   };
 
   return (
@@ -84,7 +110,7 @@ export default function Inventory() {
         <input className="search-input" placeholder="Search by name or SKU…" value={search} onChange={(e) => setSearch(e.target.value)} />
       </div>
 
-      {loading && <div className="page-loading"><div className="spinner" /></div>}
+      {loading && <LoadingSpinner fullPage />}
       {error   && <div className="alert alert-error">{error}</div>}
 
       <div className="table-wrap">
@@ -108,7 +134,7 @@ export default function Inventory() {
                 <td className="actions-cell">
                   <button className="btn-icon" title="Edit"         onClick={() => openEdit(p)}>✏️</button>
                   <button className="btn-icon" title="Adjust Stock" onClick={() => openStock(p)}>📦</button>
-                  <button className="btn-icon btn-danger" title="Delete" onClick={() => handleDelete(p._id)}>🗑️</button>
+                  <button className="btn-icon btn-danger" title="Delete" onClick={() => confirmDelete(p)}>🗑️</button>
                 </td>
               </tr>
             ))}
@@ -196,6 +222,25 @@ export default function Inventory() {
             <div className="modal-footer">
               <button className="btn btn-ghost" onClick={closeModal}>Cancel</button>
               <button className="btn btn-primary" onClick={handleStockSave} disabled={saving}>{saving ? 'Saving…' : 'Update'}</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* ── Delete Confirmation Modal ────────────────────────────────────────── */}
+      {modal === 'delete' && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal modal-sm" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Confirm Deletion</h3>
+              <button className="modal-close" onClick={closeModal}>✕</button>
+            </div>
+            <div className="modal-body">
+              <p>Are you sure you want to deactivate <strong>{selected?.name}</strong>?</p>
+              <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.5rem' }}>This action can be undone later by an admin.</p>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-ghost" onClick={closeModal}>Cancel</button>
+              <button className="btn btn-danger" onClick={handleDelete} disabled={saving}>{saving ? 'Deleting…' : 'Yes, Delete'}</button>
             </div>
           </div>
         </div>

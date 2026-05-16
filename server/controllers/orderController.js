@@ -131,7 +131,11 @@ exports.refundOrder = async (req, res, next) => {
     order.refundReason = reason || '';
     await order.save();
 
-    res.json({ success: true, order, message: 'Order refunded successfully' });
+    const populatedOrder = await Order.findById(order._id)
+      .populate('cashier', 'name email')
+      .populate('items.product', 'name sku image');
+
+    res.json({ success: true, order: populatedOrder, message: 'Order refunded successfully' });
   } catch (error) {
     next(error);
   }

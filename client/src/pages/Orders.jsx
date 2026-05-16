@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { useOrders } from '../hooks/useOrders';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const fmt = (v) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(v);
 
@@ -8,6 +11,8 @@ const PAYMENT_ICONS = { cash: '💵', card: '💳', upi: '📱', wallet: '👛',
 
 export default function Orders() {
   const { orders, loading, error, meta, params, setParams, refetch, refundOrder } = useOrders();
+  const { user } = useAuth();
+  const { showToast } = useToast();
   const [detail, setDetail] = useState(null);
   const [refundModal, setRefundModal] = useState(null);
   const [refundReason, setRefundReason] = useState('');
@@ -17,9 +22,12 @@ export default function Orders() {
     setProcessing(true);
     try {
       await refundOrder(refundModal._id, refundReason);
+      showToast('Order refunded successfully');
       setRefundModal(null);
       setRefundReason('');
-    } catch (e) { alert(e.response?.data?.message || 'Refund failed'); }
+    } catch (e) { 
+      showToast(e.response?.data?.message || 'Refund failed', 'error'); 
+    }
     finally { setProcessing(false); }
   };
 
@@ -46,7 +54,7 @@ export default function Orders() {
         ))}
       </div>
 
-      {loading && <div className="page-loading"><div className="spinner" /></div>}
+      {loading && <LoadingSpinner fullPage />}
       {error && <div className="alert alert-error">{error}</div>}
 
       <div className="table-wrap">
@@ -62,12 +70,12 @@ export default function Orders() {
                 <td>{o.items?.length} item{o.items?.length !== 1 ? 's' : ''}</td>
                 <td>{PAYMENT_ICONS[o.paymentMethod]} {o.paymentMethod}</td>
                 <td><strong>{fmt(o.total)}</strong></td>
-                <td><span className={`status-pill ${STATUS_COLORS[o.status]}`}>{o.status}</span></td>
+                <td><span className={`status-pill ${STATUS_COLORS[o.status]}`}>{o.status.charAt(0).toUpperCase() + o.status.slice(1)}</span></td>
                 <td>{new Date(o.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
                 <td className="actions-cell">
                   <button className="btn-icon" title="View" onClick={() => setDetail(o)}>👁️</button>
-                  {o.status === 'completed' && (
-                    <button className="btn-icon btn-danger" title="Refund" onClick={() => setRefundModal(o)}>↩️</button>
+                  {o.status === 'completed' && (user?.role === 'manager' || user?.role === 'admin') && (
+                    <button className="btn-icon btn-danger" title="Refund / Void" onClick={() => setRefundModal(o)}>↩️</button>
                   )}
                 </td>
               </tr>
@@ -100,7 +108,7 @@ export default function Orders() {
               <div className="order-meta-grid">
                 <div><span className="meta-label">Customer</span><span>{detail.customer?.name}</span></div>
                 <div><span className="meta-label">Payment</span><span>{detail.paymentMethod}</span></div>
-                <div><span className="meta-label">Status</span><span className={`status-pill ${STATUS_COLORS[detail.status]}`}>{detail.status}</span></div>
+                <div><span className="meta-label">Status</span><span className={`status-pill ${STATUS_COLORS[detail.status]}`}>{detail.status.charAt(0).toUpperCase() + detail.status.slice(1)}</span></div>
                 <div><span className="meta-label">Date</span><span>{new Date(detail.createdAt).toLocaleString('en-IN')}</span></div>
               </div>
               <table className="data-table mt-4">

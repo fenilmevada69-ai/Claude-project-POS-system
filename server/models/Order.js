@@ -28,8 +28,11 @@ const orderSchema = new mongoose.Schema(
     total: { type: Number, required: true, min: 0 },
     paymentMethod: {
       type: String,
-      enum: ['cash', 'card', 'upi', 'wallet', 'split'],
-      required: true,
+      enum: ['cash', 'card', 'upi', 'wallet', 
+             'card-debit', 'card-credit',
+             'wallet-phonepe', 'wallet-googlepay', 
+             'wallet-paytm', 'wallet-amazonpay'],
+      required: true
     },
     paymentStatus: {
       type: String,

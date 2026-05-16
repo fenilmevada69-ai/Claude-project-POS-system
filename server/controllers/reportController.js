@@ -11,11 +11,11 @@ exports.getSummary = async (req, res, next) => {
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
 
-    const [todayOrders, yesterdayOrders, totalProducts, lowStockCount] = await Promise.all([
+    const [todayOrders, yesterdayOrders, totalProducts, lowStockItems] = await Promise.all([
       Order.find({ createdAt: { $gte: today }, status: 'completed' }),
       Order.find({ createdAt: { $gte: yesterday, $lt: today }, status: 'completed' }),
       Product.countDocuments({ isActive: true }),
-      Product.countDocuments({ isActive: true, $expr: { $lte: ['$stock', '$lowStockThreshold'] } }),
+      Product.find({ isActive: true, $expr: { $lte: ['$stock', '$lowStockThreshold'] } }).select('name stock sku image lowStockThreshold').lean(),
     ]);
 
     const todayRevenue = todayOrders.reduce((sum, o) => sum + o.total, 0);
@@ -29,7 +29,8 @@ exports.getSummary = async (req, res, next) => {
         todayOrders: todayOrders.length,
         revenueGrowth: Number(revenueGrowth),
         totalProducts,
-        lowStockCount,
+        lowStockCount: lowStockItems.length,
+        lowStockItems,
         avgOrderValue: todayOrders.length ? (todayRevenue / todayOrders.length).toFixed(2) : 0,
       },
     });

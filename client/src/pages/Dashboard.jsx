@@ -1,4 +1,5 @@
 import { useReports } from '../hooks/useReports';
+import { useNavigate } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, Label,
@@ -12,23 +13,29 @@ const formatCurrency = (v) =>
 
 export default function Dashboard() {
   const { summary, revenue, topProducts, paymentMethods, loading, period, setPeriod } = useReports();
+  const navigate = useNavigate();
 
   if (loading) return <div className="page-loading"><div className="spinner" /></div>;
 
   return (
     <div className="page dashboard-page">
       {/* Header */}
-      <div className="page-header">
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
           <h2 className="page-title">Dashboard</h2>
           <p className="page-subtitle">Welcome back — here's what's happening today.</p>
         </div>
-        <div className="period-tabs">
-          {['7d', '30d', '90d'].map((p) => (
-            <button key={p} className={`tab-btn ${period === p ? 'active' : ''}`} onClick={() => setPeriod(p)}>
-              {p === '7d' ? '7 Days' : p === '30d' ? '30 Days' : '90 Days'}
-            </button>
-          ))}
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <button className="btn btn-primary" onClick={() => navigate('/payment')}>
+            + New Sale
+          </button>
+          <div className="period-tabs">
+            {['7d', '30d', '90d'].map((p) => (
+              <button key={p} className={`tab-btn ${period === p ? 'active' : ''}`} onClick={() => setPeriod(p)}>
+                {p === '7d' ? '7 Days' : p === '30d' ? '30 Days' : '90 Days'}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -107,25 +114,42 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Top Products */}
-      <div className="chart-card">
-        <h3 className="chart-title">Top Products</h3>
-        <div className="top-products-list">
-          {topProducts.map((p, i) => (
-            <div key={p._id} className="top-product-row">
-              <span className="rank">#{i + 1}</span>
-              <span className="prod-name">{p.name}</span>
-              <span className="prod-qty">{p.totalQuantity} sold</span>
-              <span className="prod-revenue">{formatCurrency(p.totalRevenue)}</span>
-              <div className="prod-bar-wrap">
-                <div
-                  className="prod-bar"
-                  style={{ width: `${(p.totalRevenue / (topProducts[0]?.totalRevenue || 1)) * 100}%` }}
-                />
+      {/* Top Products & Low Stock Row */}
+      <div className="charts-row mt-6">
+        <div className="chart-card">
+          <h3 className="chart-title">Top Products</h3>
+          <div className="top-products-list">
+            {topProducts.map((p, i) => (
+              <div key={p._id} className="top-product-row">
+                <span className="rank">#{i + 1}</span>
+                <span className="prod-name">{p.name}</span>
+                <span className="prod-qty">{p.totalQuantity} sold</span>
+                <span className="prod-revenue">{formatCurrency(p.totalRevenue)}</span>
+                <div className="prod-bar-wrap">
+                  <div
+                    className="prod-bar"
+                    style={{ width: `${(p.totalRevenue / (topProducts[0]?.totalRevenue || 1)) * 100}%` }}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
-          {topProducts.length === 0 && <p className="empty-state">No sales data yet.</p>}
+            ))}
+            {topProducts.length === 0 && <p className="empty-state">No sales data yet.</p>}
+          </div>
+        </div>
+
+        <div className="chart-card">
+          <h3 className="chart-title" style={{ color: 'var(--danger)' }}>Low Stock Alerts</h3>
+          <div className="low-stock-list">
+            {summary?.lowStockItems?.map(item => (
+              <div key={item._id} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 0', borderBottom: '1px solid var(--border)' }}>
+                <span style={{ fontWeight: '500' }}>{item.name}</span>
+                <span style={{ color: 'var(--danger)', fontWeight: 'bold' }}>{item.stock} left</span>
+              </div>
+            ))}
+            {(!summary?.lowStockItems || summary.lowStockItems.length === 0) && (
+              <p className="empty-state">All products are sufficiently stocked.</p>
+            )}
+          </div>
         </div>
       </div>
     </div>
