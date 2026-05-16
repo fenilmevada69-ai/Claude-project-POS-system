@@ -41,16 +41,17 @@ export const useCheckout = () => {
   const [error, setError] = useState(null);
   const [lastOrder, setLastOrder] = useState(null);
 
-  const checkout = async () => {
+  const checkout = async (overrides = {}) => {
     setLoading(true);
     setError(null);
     try {
       const payload = {
         items: cart.items.map((i) => ({ product: i._id, quantity: i.quantity, discount: 0 })),
-        paymentMethod: cart.paymentMethod,
+        paymentMethod: overrides.paymentMethod || cart.paymentMethod,
         customer: cart.customer,
         note: cart.note,
         discountAmount: cart.discount,
+        ...overrides
       };
       const { data } = await ordersAPI.create(payload);
       setLastOrder(data.order);

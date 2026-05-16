@@ -22,6 +22,12 @@ export default function CartPanel({ setProducts, fetchProducts }) {
   const [success, setSuccess] = useState(null);
   const [error, setError]     = useState('');
 
+  // Sub-panel states
+  const [showSubPanel, setShowSubPanel] = useState(false);
+  const [cashReceived, setCashReceived] = useState('');
+  const [selectedWallet, setSelectedWallet] = useState('');
+  const [cardType, setCardType] = useState('Debit Card');
+
   const handleIncrement = (item) => {
     if (item.quantity >= item.stock) {
       alert(`Only ${item.stock} units available for ${item.name}`);
@@ -30,7 +36,12 @@ export default function CartPanel({ setProducts, fetchProducts }) {
     updateQty(item._id, item.quantity + 1);
   };
 
-  const handleCheckout = async () => {
+  const handleMethodClick = (id) => {
+    setPaymentMethod(id);
+    setShowSubPanel(true);
+  };
+
+  const handleCheckout = async (subMethodInfo = '') => {
     if (items.length === 0) return;
     setError('');
 
@@ -43,9 +54,14 @@ export default function CartPanel({ setProducts, fetchProducts }) {
     }
 
     try {
-      const order = await checkout();
+      // Create a descriptive payment method string for the order
+      const finalPaymentMethod = subMethodInfo ? `${paymentMethod} (${subMethodInfo})` : paymentMethod;
       
-      // 1. Optimistic stock update (using cart data — cart must still exist here)
+      const order = await checkout({
+        paymentMethod: finalPaymentMethod
+      });
+      
+      // 1. Optimistic stock update
       if (setProducts && Array.isArray(items)) {
         setProducts(prev => {
           if (!Array.isArray(prev)) return prev;
@@ -61,6 +77,9 @@ export default function CartPanel({ setProducts, fetchProducts }) {
 
       // 2. Clear cart
       clearCart();
+      setShowSubPanel(false);
+      setCashReceived('');
+      setSelectedWallet('');
 
       // 3. Fetch fresh data from backend
       if (fetchProducts) {
@@ -91,6 +110,11 @@ export default function CartPanel({ setProducts, fetchProducts }) {
       </div>
     );
   }
+
+  const changeToReturn = Number(cashReceived) - total;
+  const isCashSufficient = Number(cashReceived) >= total;
+
+  const upiQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(`upi://pay?pa=lumina@upi&pn=LuminaPOS&am=${total}&cu=INR`)}`;
 
   return (
     <div className="cart-panel">
@@ -131,56 +155,185 @@ export default function CartPanel({ setProducts, fetchProducts }) {
         ))}
       </div>
 
-      {/* Discount */}
-      <div className="cart-discount">
-        <label>Discount (%)</label>
-        <input
-          type="number"
-          min={0}
-          max={100}
-          placeholder="0"
-          value={discount}
-          onChange={(e) => setDiscount(Math.min(100, Math.max(0, Number(e.target.value))))}
-          className="discount-input"
-        />
-      </div>
+      {/* Footer (Totals + Payment) */}
+      <div className="cart-footer">
+        {/* Totals */}
+        <div className="cart-totals">
+          <div className="totals-row"><span>Subtotal</span><span>{fmt(subtotal)}</span></div>
+          <div className="totals-row"><span>Tax</span><span>{fmt(taxAmount)}</span></div>
+          <div className="cart-discount" style={{ padding: '0.3rem 0', border: 'none' }}>
+            <label>Discount (%)</label>
+            <input
+              type="number"
+              min={0}
+              max={100}
+              placeholder="0"
+              value={discount}
+              onChange={(e) => setDiscount(Math.min(100, Math.max(0, Number(e.target.value))))}
+              className="discount-input"
+            />
+          </div>
+          {discount > 0 && (
+            <div className="totals-row totals-discount">
+              <span>Discount <em className="discount-pct">({discount}%)</em></span>
+              <span>−{fmt(discountAmount)}</span>
+            </div>
+          )}
+          <div className="totals-row totals-grand"><span>Total</span><span>{fmt(total)}</span></div>
+        </div>
 
-      {/* Payment Method */}
-      <div className="payment-methods">
-        {PAYMENT_METHODS.map((m) => (
-          <button
-            key={m.id}
-            className={`pay-method-btn ${paymentMethod === m.id ? 'active' : ''}`}
-            onClick={() => setPaymentMethod(m.id)}
-          >
-            {m.icon} {m.label}
-          </button>
-        ))}
-      </div>
+        {/* Payment Method */}
+        <div className="payment-methods">
+          {PAYMENT_METHODS.map((m) => (
+            <button
+              key={m.id}
+              className={`pay-method-btn ${paymentMethod === m.id ? 'active' : ''}`}
+              onClick={() => handleMethodClick(m.id)}
+            >
+              {m.icon} {m.label}
+            </button>
+          ))}
+        </div>
 
-      {/* Totals */}
-      <div className="cart-totals">
-        <div className="totals-row"><span>Subtotal</span><span>{fmt(subtotal)}</span></div>
-        <div className="totals-row"><span>Tax</span><span>{fmt(taxAmount)}</span></div>
-        {discount > 0 && (
-          <div className="totals-row totals-discount">
-            <span>Discount <em className="discount-pct">({discount}%)</em></span>
-            <span>−{fmt(discountAmount)}</span>
+        {/* Payment Sub-Panels */}
+        {showSubPanel && items.length > 0 && (
+          <div className="payment-panel">
+            {paymentMethod === 'cash' && (
+              <div className="cash-panel">
+                <div className="panel-title">💵 Cash Payment</div>
+                <div className="info-box">Collect Cash Payment</div>
+                <div className="amount-collect">
+                  <span className="label">Amount to Collect</span>
+                  <span className="value">{fmt(total)}</span>
+                </div>
+                <div className="form-group">
+                  <label>Cash Received (₹)</label>
+                  <input 
+                    type="number" 
+                    placeholder="Enter amount..." 
+                    value={cashReceived}
+                    onChange={(e) => setCashReceived(e.target.value)}
+                    autoFocus
+                  />
+                </div>
+                <div className={`change-row ${isCashSufficient ? 'success' : 'insufficient'}`}>
+                  <span>{isCashSufficient ? 'Change to Return:' : 'Status:'}</span>
+                  <span>{isCashSufficient ? fmt(changeToReturn) : 'Insufficient amount'}</span>
+                </div>
+                <button 
+                  className="btn btn-primary btn-full mt-4"
+                  disabled={!isCashSufficient || loading}
+                  onClick={() => handleCheckout(`Received: ${fmt(Number(cashReceived))}`)}
+                >
+                  Confirm Cash Payment
+                </button>
+              </div>
+            )}
+
+            {paymentMethod === 'upi' && (
+              <div className="upi-panel">
+                <div className="panel-title">📱 UPI Payment</div>
+                <div className="qr-container">
+                  <img src={upiQrUrl} alt="UPI QR" className="qr-image" />
+                  <p className="qr-text">Scan to pay {fmt(total)}</p>
+                  <span className="upi-id">lumina@upi</span>
+                  <p className="upi-hint">Ask customer to scan and confirm payment</p>
+                </div>
+                <button 
+                  className="btn btn-primary btn-full mt-4"
+                  disabled={loading}
+                  onClick={() => handleCheckout()}
+                >
+                  Payment Received
+                </button>
+              </div>
+            )}
+
+            {paymentMethod === 'card' && (
+              <div className="card-panel">
+                <div className="panel-title">💳 Card Payment</div>
+                <div className="card-type-pills">
+                  {['Debit Card', 'Credit Card'].map(t => (
+                    <button 
+                      key={t}
+                      className={`pill ${cardType === t ? 'active' : ''}`}
+                      onClick={() => setCardType(t)}
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+                <div className="card-brands">
+                  <span>Visa</span><span>Mastercard</span><span>RuPay</span><span>Amex</span>
+                </div>
+                <div className="card-illustration">
+                  <div className="chip"></div>
+                  <div className="card-num">**** **** **** ****</div>
+                </div>
+                <p className="terminal-text">Swipe, insert or tap card on terminal</p>
+                <div className="amount-collect" style={{ marginBottom: '0.5rem' }}>
+                  <span className="value" style={{ fontSize: '1.1rem' }}>{fmt(total)}</span>
+                </div>
+                <button 
+                  className="btn btn-primary btn-full mt-2"
+                  disabled={loading}
+                  onClick={() => handleCheckout(cardType)}
+                >
+                  Payment Done
+                </button>
+              </div>
+            )}
+
+            {paymentMethod === 'wallet' && (
+              <div className="wallet-panel">
+                <div className="panel-title">👛 Digital Wallet</div>
+                <div className="wallet-grid">
+                  {[
+                    { id: 'PhonePe', color: 'phonepe', icon: '🟣' },
+                    { id: 'Google Pay', color: 'gpay', icon: '🌈' },
+                    { id: 'Paytm', color: 'paytm', icon: '🔵' },
+                    { id: 'Amazon Pay', color: 'amazon', icon: '🟠' },
+                  ].map(w => (
+                    <button 
+                      key={w.id}
+                      className={`wallet-btn ${w.color} ${selectedWallet === w.id ? 'active' : ''}`}
+                      onClick={() => setSelectedWallet(w.id)}
+                    >
+                      <span className="wallet-icon">{w.icon}</span>
+                      <span className="wallet-name">{w.id}</span>
+                    </button>
+                  ))}
+                </div>
+                
+                {selectedWallet && (
+                  <div className="qr-container mt-4" style={{ animation: 'slideDown 0.3s ease-out' }}>
+                    <img src={upiQrUrl} alt="Wallet QR" className="qr-image" style={{ width: '120px', height: '120px' }} />
+                    <p className="qr-text" style={{ fontSize: '0.75rem' }}>Scan with {selectedWallet}</p>
+                    <button 
+                      className="btn btn-primary btn-full mt-2"
+                      disabled={loading}
+                      onClick={() => handleCheckout(selectedWallet)}
+                    >
+                      Payment Received
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
-        <div className="totals-row totals-grand"><span>Total</span><span>{fmt(total)}</span></div>
+
+        {error && <p className="alert alert-error mt-2" style={{ margin: '0.5rem 0.75rem' }}>{error}</p>}
+
+        {/* Checkout Button */}
+        <button
+          className="btn btn-primary btn-full btn-checkout"
+          onClick={() => setShowSubPanel(true)}
+          disabled={loading || items.length === 0 || showSubPanel}
+        >
+          {loading ? 'Processing…' : `Charge ${fmt(total)}`}
+        </button>
       </div>
-
-      {error && <p className="alert alert-error mt-2">{error}</p>}
-
-      {/* Checkout */}
-      <button
-        className="btn btn-primary btn-full btn-checkout"
-        onClick={handleCheckout}
-        disabled={loading || items.length === 0}
-      >
-        {loading ? 'Processing…' : `Charge ${fmt(total)}`}
-      </button>
     </div>
   );
 }
